@@ -10,9 +10,34 @@
 		D7429045306E237B00DAE802 /* CPUScheduler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CPUScheduler.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D7F23765306F829200195C56 /* Exceptions for "CPUScheduler" folder in "CPUScheduler" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				.swiftformat,
+				Info.plist,
+			);
+			target = D7429044306E237B00DAE802 /* CPUScheduler */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		D7F23766306F829200195C56 /* Exceptions for "CPUScheduler" folder in "Compile Sources" phase from "CPUScheduler" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = D7429041306E237B00DAE802 /* Sources */;
+			membershipExceptions = (
+				.swiftformat,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D7429047306E237B00DAE802 /* CPUScheduler */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D7F23765306F829200195C56 /* Exceptions for "CPUScheduler" folder in "CPUScheduler" target */,
+				D7F23766306F829200195C56 /* Exceptions for "CPUScheduler" folder in "Compile Sources" phase from "CPUScheduler" target */,
+			);
 			explicitFolders = (
 				Resources/.gamekit,
 			);
@@ -258,6 +283,7 @@
 				DEVELOPMENT_TEAM = A8S5HN3US7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CPUScheduler/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -292,6 +318,7 @@
 				DEVELOPMENT_TEAM = A8S5HN3US7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CPUScheduler/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

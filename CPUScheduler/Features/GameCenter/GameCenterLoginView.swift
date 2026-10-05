@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-struct GameCenterLoginView: UIViewControllerRepresentable {
+struct GameCenterLoginView : UIViewControllerRepresentable
+{
   let viewController: UIViewController
   
   func makeUIViewController(context: Context) -> UIViewController

@@ -8,19 +8,22 @@
 import SwiftUI
 import GameKit
 
-struct MainMenuView: View {
+struct MainMenuView : View
+{
   @StateObject private var gcManager = GameCenterManager()
   
   @ViewBuilder
   var profileImage: some View {
-    if let avatar = gcManager.avatar {
+    if let avatar = gcManager.avatar
+    {
       Image(uiImage: avatar)
         .resizable()
         .scaledToFill()
         .frame(width: 80, height: 80)
         .clipShape(Circle())
     }
-    else {
+    else
+    {
       Image(systemName: "person.circle.fill")
         .font(.system(size: 80))
     }
@@ -30,65 +33,106 @@ struct MainMenuView: View {
     Text(gcManager.localPlayer.displayName)
       .font(.headline)
   }
+  
+  var mainButtons: some View {
+    VStack {
+      NavigationLink(destination: GameView()) {
+        Text("PLAY NOW")
+      }
+      NavigationLink(destination: LevelSelectView()) {
+        Text("LEVEL SELECT")
+      }
+      NavigationLink(destination: GameView()) {
+        Text("SURVIVAL MODE")
+      }
+      otherButtons
+    }
+  }
+  
+  var otherButtons: some View {
+    HStack {
+      NavigationLink(destination: ChallengesView()) {
+        Text("CHALLENGES")
+      }
+      NavigationLink(destination: LeaderboardView()) {
+        Text("LEADERBOARD")
+      }
+      NavigationLink(destination: SettingsView()) {
+        Text("SETTINGS")
+      }
+    }
+  }
 
   var body: some View {
-    VStack(spacing: 20) {
-      if #available(iOS 26.0, *) {
-        HStack(spacing: 10) {
-          if gcManager.isAuthenticated {
-            profileImage
-            profileName
+    NavigationView {
+      VStack(spacing: 20) {
+        if #available(iOS 26.0, *)
+        {
+          HStack(spacing: 10) {
+            if gcManager.isAuthenticated {
+              profileImage
+              profileName
+            }
+            Spacer()
           }
-          Spacer()
+          .padding(.horizontal, 14)
+          .padding(.vertical, 8)
+          .glassEffect(.regular, in: .capsule)
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 8)
-        .glassEffect(.regular, in: .capsule)
-      }
-      else {
-        HStack(spacing: 10) {
-          if gcManager.isAuthenticated {
-            profileImage
-            profileName
+        else
+        {
+          HStack(spacing: 10) {
+            if gcManager.isAuthenticated
+            {
+              profileImage
+              profileName
+            }
+            Spacer()
           }
-          Spacer()
+          .padding(.horizontal, 14)
+          .padding(.vertical, 8)
+          .background(.ultraThinMaterial, in: .capsule)
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 8)
-        .background(.ultraThinMaterial, in: .capsule)
-      }
-
-      if !gcManager.isAuthenticated {
-        Button("Sign In to Game Center") {
-          gcManager.authenticate()
-        }
-      }
-    }
-    .padding()
-    .onAppear {
-      gcManager.authenticate()
-    }
-    .sheet(
-      item: Binding<IdentifiableViewController?>(
-        get: {
-          gcManager.authViewController.map {
-            IdentifiableViewController(vc: $0)
+        
+        if !gcManager.isAuthenticated
+        {
+          Button("Sign In to Game Center") {
+            gcManager.authenticate()
           }
-        },
-        set: { _ in gcManager.authViewController = nil }
-      )
-    ) { sheetVC in
-      GameCenterLoginView(viewController: sheetVC.vc)
+        }
+        else
+        {
+          mainButtons
+        }
+      }
+      .padding()
+      .onAppear {
+        gcManager.authenticate()
+      }
+      .sheet(
+        item: Binding<IdentifiableViewController?>(
+          get: {
+            gcManager.authViewController.map {
+              IdentifiableViewController(vc: $0)
+            }
+          },
+          set: { _ in gcManager.authViewController = nil }
+        )
+      ) { sheetVC in
+        GameCenterLoginView(viewController: sheetVC.vc)
+      }
     }
   }
 }
 
 // helper struct to make the sheet presentation work with Identifiable
-struct IdentifiableViewController: Identifiable {
+struct IdentifiableViewController : Identifiable
+{
   let id = UUID()
   let vc: UIViewController
 }
 
-#Preview {
-    MainMenuView()
+#Preview
+{
+  MainMenuView()
 }

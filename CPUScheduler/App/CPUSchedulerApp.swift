@@ -8,10 +8,11 @@
 import SwiftUI
 
 @main
-struct CPUSchedulerApp: App {
-    var body: some Scene {
-        WindowGroup {
-            MainMenuView()
-        }
+struct CPUSchedulerApp : App
+{
+  var body: some Scene {
+    WindowGroup {
+      MainMenuView()
     }
+  }
 }
