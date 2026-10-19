@@ -63,7 +63,7 @@ final class HorizontalNodeList : SKNode
   func handleTouchesBegan(_ touches: Set<UITouch>)
   {
     guard let touch = touches.first else { return }
-    lastTouchX - touch.location(in: self).x
+    lastTouchX = touch.location(in: self).x
     isDragging = true
   }
 

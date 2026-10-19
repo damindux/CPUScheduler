@@ -10,9 +10,13 @@ import SpriteKit
 
 struct GameView : View
 {
+  private let gameViewModel = GameViewModel()
+  
   var scene: SKScene {
-    let scene = GameScene()
-    scene.size = CGSize(width: 400, height: 800)
+    let scene = GameScene(
+      gameViewModel: gameViewModel,
+      size: CGSize(width: 400, height: 800),
+    )
     scene.scaleMode = .resizeFill
     return scene
   }

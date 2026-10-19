@@ -7,9 +7,6 @@
 
 import SpriteKit
 
-// @todo: Create game view model
-// @todo: add level details to game view model
-// @todo: add the timers in game view model
 final class GameScene : SKScene
 {
   let rows = 2
@@ -17,44 +14,52 @@ final class GameScene : SKScene
   let cellWidth: CGFloat = 175
   let cellHeight: CGFloat = 120
   let cellSpacing: CGFloat = 10
-
-  private let nodeList = HorizontalNodeList(
-    size: CGSize(width: 320, height: 100)
-  )
-
-  func addIncomingTasks()
+  
+  private let gameViewModel: GameViewModel
+  
+  init(gameViewModel: GameViewModel, size: CGSize)
   {
-    nodeList.position = CGPoint(x: frame.midX, y: frame.midY)    
+    self.gameViewModel = gameViewModel
+    super.init(size: size)
+  }
+  
+  // @info: Compiler asked me to implement this
+  // because SKScene conforms to NSCoding
+  required init?(coder aDecoder: NSCoder)
+  {
+    fatalError("init(coder:) has not been implemented")
+  }
+  
+  private let nodeList = HorizontalNodeList(size: CGSize(width: 320, height: 125))
+
+  private func drawIncomingTasks(position: CGPoint)
+  {
+    nodeList.position = position
     addChild(nodeList)
     
-    let items: [SKNode] = (1...10).map { number in
+    let items: Array<SKNode> = (1...10).map { number in
       let node = SKShapeNode(
         rectOf: CGSize(width: 175, height: 120),
         cornerRadius: 8
       )
       
       node.strokeColor = .appBlue
-      // @todo: figure out why there are no top and bottom borders
       node.lineWidth = 3
 
       let label = SKLabelNode(text: "\(number)")
       label.fontSize = 24
-      //label.verticalAlignmentMode = .center
+      label.verticalAlignmentMode = .center
       node.addChild(label)
-      // @todo: change the position of the incoming tasks
-      // @todo: add labels inside CPU cores
 
       return node
     }
 
     nodeList.setItems(items, spacing: 10)
   }
-    
-
-  override func didMove(to view: SKView)
+   
+  private func drawCPUCores()
   {
-    self.backgroundColor = .backgroundColor
-
+    // @todo: add labels inside CPU cores
     let stepX = cellWidth + cellSpacing
     let stepY = cellHeight + cellSpacing
     
@@ -62,7 +67,7 @@ final class GameScene : SKScene
     let gridHeight = CGFloat(rows) * stepY - cellSpacing
     let origin = CGPoint(
       x: (size.width - gridWidth) / 2,
-      y: (size.height - gridHeight) / 2
+      y: (size.height - gridHeight) / 2,
     )
     
     for row in 0..<rows
@@ -77,7 +82,7 @@ final class GameScene : SKScene
         
         node.position = CGPoint(
           x: origin.x + (CGFloat(col) + 0.5) * stepX,
-          y: origin.y + (CGFloat(row) + 0.5) * stepY
+          y: origin.y + (CGFloat(row) + 0.5) * stepY,
         )
         node.strokeColor = .appGreen
         node.lineWidth = 3
@@ -85,19 +90,29 @@ final class GameScene : SKScene
         addChild(node)
       }
     }
+  }
+
+  override func didMove(to view: SKView)
+  {
+    self.backgroundColor = .backgroundColor
+
+    drawCPUCores()
     
-    let label = SKLabelNode(text: "Incoming Tasks")
-    label.fontName = "JetBrainsMonoRoman-Bold"
-    label.fontSize = 16
-    label.fontColor = .white
-    let labelWidth = label.calculateAccumulatedFrame().size.width
-    label.position = CGPoint(
-      x:  labelWidth / 2 + 20,
+    let incomingTasksTitleLabel = SKLabelNode(text: "Incoming Tasks")
+    incomingTasksTitleLabel.fontName = "JetBrainsMonoRoman-Bold"
+    incomingTasksTitleLabel.fontSize = 16
+    incomingTasksTitleLabel.fontColor = .white
+    let incomingTasksTitleLabelWidth = incomingTasksTitleLabel.calculateAccumulatedFrame().size.width
+    incomingTasksTitleLabel.position = CGPoint(
+      x:  incomingTasksTitleLabelWidth / 2 + 20,
       y: (size.height / 2) - (cellWidth + 30)
     )
-    addChild(label)
+    addChild(incomingTasksTitleLabel)
 
-    addIncomingTasks()
+    drawIncomingTasks(position: CGPoint(
+      x: incomingTasksTitleLabel.position.x,
+      y: incomingTasksTitleLabel.position.y - 10,
+    ))
   }
   
   // @todo: Add functionality to drag and drop tasks into CPU cores
@@ -121,3 +136,7 @@ final class GameScene : SKScene
     nodeList.handleTouchesEnded()
   }
 }
+
+// @todo: Add pause button
+// @todo: Add pause menu
+// @todo: render timer
