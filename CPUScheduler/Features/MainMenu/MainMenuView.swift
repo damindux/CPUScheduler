@@ -10,11 +10,11 @@ import GameKit
 
 struct MainMenuView : View
 {
-  @StateObject private var gcManager = GameCenterManager()
+  @StateObject private var gcViewModel = GameCenterViewModel()
   
   @ViewBuilder
   var profileImage: some View {
-    if let avatar = gcManager.avatar
+    if let avatar = gcViewModel.avatar
     {
       Image(uiImage: avatar)
         .resizable()
@@ -30,7 +30,7 @@ struct MainMenuView : View
   }
   
   var profileName: some View {
-    Text(gcManager.localPlayer.displayName)
+    Text(gcViewModel.getPlayerDisplayName())
       .font(.headline)
   }
   
@@ -66,38 +66,48 @@ struct MainMenuView : View
   var body: some View {
     NavigationView {
       VStack(spacing: 20) {
+        // NOTE: Just playing around with platform macros
         if #available(iOS 26.0, *)
         {
-          HStack(spacing: 10) {
-            if gcManager.isAuthenticated {
+          if gcViewModel.signedIn
+          {
+            HStack(spacing: 10) {
               profileImage
               profileName
+              Spacer()
             }
-            Spacer()
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .glassEffect(.regular, in: .capsule)
           }
-          .padding(.horizontal, 14)
-          .padding(.vertical, 8)
-          .glassEffect(.regular, in: .capsule)
         }
         else
         {
-          HStack(spacing: 10) {
-            if gcManager.isAuthenticated
-            {
+          if gcViewModel.signedIn
+          {
+            HStack(spacing: 10) {
               profileImage
               profileName
+              Spacer()
             }
-            Spacer()
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(.ultraThinMaterial, in: .capsule)
           }
-          .padding(.horizontal, 14)
-          .padding(.vertical, 8)
-          .background(.ultraThinMaterial, in: .capsule)
         }
         
-        if !gcManager.isAuthenticated
+        if !gcViewModel.signedIn
         {
           Button("Sign In to Game Center") {
-            gcManager.authenticate()
+            do
+            {
+              try gcViewModel.playerSignIn()
+            }
+            catch
+            {
+              gcViewModel.errorMessage = error.localizedDescription
+              gcViewModel.showError = true
+            }
           }
         }
         else
@@ -107,29 +117,26 @@ struct MainMenuView : View
       }
       .padding()
       .onAppear {
-        gcManager.authenticate()
+        do
+        {
+          try gcViewModel.playerSignIn()
+        }
+        catch
+        {
+          gcViewModel.errorMessage = error.localizedDescription
+          gcViewModel.showError = true
+        }
       }
-      .sheet(
-        item: Binding<IdentifiableViewController?>(
-          get: {
-            gcManager.authViewController.map {
-              IdentifiableViewController(vc: $0)
-            }
-          },
-          set: { _ in gcManager.authViewController = nil }
-        )
-      ) { sheetVC in
+      .alert("Sign In Failed", isPresented: $gcViewModel.showError) {
+        Button("OK", role: .cancel) {}
+      } message: {
+        Text(gcViewModel.errorMessage ?? "An unknown error occured.")
+      }
+      .sheet(item: $gcViewModel.loginSheet) { sheetVC in
         GameCenterLoginView(viewController: sheetVC.vc)
       }
     }
   }
-}
-
-// helper struct to make the sheet presentation work with Identifiable
-struct IdentifiableViewController : Identifiable
-{
-  let id = UUID()
-  let vc: UIViewController
 }
 
 #Preview

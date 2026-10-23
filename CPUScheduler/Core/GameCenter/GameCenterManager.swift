@@ -8,62 +8,71 @@
 import Combine
 import GameKit
 
-@MainActor
-final class GameCenterManager : ObservableObject
+final class GameCenterManager
 {
-  @Published private(set) var isAuthenticated = false
-  @Published private(set) var avatar: UIImage?
+  private(set) var isAuthenticated = false
+  private(set) var authenticationError: GameCenterError? = nil
+  
+  var viewController: UIViewController? = nil
 
   var localPlayer: GKLocalPlayer {
     GKLocalPlayer.local
   }
 
-  @Published var authViewController: UIViewController?
-
   func authenticate()
   {
-    let player = GKLocalPlayer.local
-
-    player.authenticateHandler = { [weak self] viewController, error in
-      Task { @MainActor in
+    localPlayer.authenticateHandler = { [weak self] viewController, error in
+      Task { [weak self] in
         guard let self else { return }
 
         if let error
         {
-          print("Game Center error: ", error)
           self.isAuthenticated = false
+          self.authenticationError = GameCenterError.AuthenticationFailed
           return
         }
 
         if let viewController
         {
-          self.authViewController = viewController
+          self.viewController = viewController
           return
         }
 
-        if player.isAuthenticated
-        {
-          self.isAuthenticated = true
-          self.loadAvatar()
-        }
+        self.isAuthenticated = self.localPlayer.isAuthenticated
       }
     }
   }
-
-  private func loadAvatar()
+  
+  func getPlayerIdentityInfo() async throws -> IdentitySignature
   {
-    GKLocalPlayer.local.loadPhoto(
-      for: .small
-    ) { [weak self] image, error in
-      Task { @MainActor in
-        if let error
-        {
-          print("Failed to load Game Center avatar:", error)
-          return
-        }
-
-        self?.avatar = image
-      }
+    guard self.isAuthenticated else
+    {
+      throw GameCenterError.NotAuthenticated
     }
+    
+    let (publicUrl, signature, salt, timestamp) = try await localPlayer.fetchItemsForIdentityVerificationSignature()
+    
+    return IdentitySignature(
+      publickeyURL: publicUrl,
+      signature: signature,
+      salt: salt,
+      timestamp: timestamp,
+      playerID: localPlayer.teamPlayerID
+    )
   }
+}
+
+struct IdentitySignature
+{
+  let publickeyURL: URL
+  let signature: Data
+  let salt: Data
+  let timestamp: UInt64
+  let playerID: String
+}
+
+enum GameCenterError : Error
+{
+  case NotAuthenticated
+  case AuthenticationFailed
 }
