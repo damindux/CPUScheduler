@@ -8,7 +8,8 @@
 import Combine
 import Foundation
 
-final class GameViewModel : ObservableObject
+final
+class GameViewModel : ObservableObject
 {
   @Published var currentlevel: Level = Level(
     name: "",
@@ -47,13 +48,13 @@ final class GameViewModel : ObservableObject
     }
   }
   
-  // @todo: Create task queue
+  // TODO(dsd): @feature Create task queue
   // Task must come in random intervals and random amount of tasks
   // around 2-5 tasks should come at a time. We have the task list
   // So I have to create a mechanism to achieve this without
   // changing the task list.
   
-  // @todo: add the timers in game view model
+  // TODO(dsd): @feature add the timers in game view model
 }
 
 enum GameStatus

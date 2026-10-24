@@ -7,13 +7,13 @@
 
 struct IdentityService
 {
-  // TODO: send the identity payload to the API
+  // TODO(dsd): send the identity payload to the API
   func sendIdentityPayloadToAPI()
   {
     #warning("TODO: Not implemented yet")
   }
   
-  // TODO: receive token and store in keychain
+  // TODO(dsd): receive token and store in keychain
   func receiveAuthenticationTokenFromAPI()
   {
     #warning("TODO: Not implemented yet")

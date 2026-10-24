@@ -7,7 +7,8 @@
 
 import SpriteKit
 
-final class GameScene : SKScene
+final
+class GameScene : SKScene
 {
   let rows = 2
   let columns = 2
@@ -23,16 +24,17 @@ final class GameScene : SKScene
     super.init(size: size)
   }
   
-  // @info: Compiler asked me to implement this
-  // because SKScene conforms to NSCoding
-  required init?(coder aDecoder: NSCoder)
+  // NOTE(dsd): compiler asked me to implement this because SKScene conforms to NSCoding
+  required
+  init?(coder aDecoder: NSCoder)
   {
     fatalError("init(coder:) has not been implemented")
   }
   
   private let nodeList = HorizontalNodeList(size: CGSize(width: 320, height: 125))
 
-  private func drawIncomingTasks(position: CGPoint)
+  private
+  func drawIncomingTasks(position: CGPoint)
   {
     nodeList.position = position
     addChild(nodeList)
@@ -43,7 +45,7 @@ final class GameScene : SKScene
         cornerRadius: 8
       )
       
-      node.strokeColor = .appBlue
+      node.strokeColor = SKColor.gameBlue
       node.lineWidth = 3
 
       let label = SKLabelNode(text: "\(number)")
@@ -57,9 +59,10 @@ final class GameScene : SKScene
     nodeList.setItems(items, spacing: 10)
   }
    
-  private func drawCPUCores()
+  private
+  func drawCPUCores()
   {
-    // @todo: add labels inside CPU cores
+    // TODO(dsd): add labels inside CPU cores
     let stepX = cellWidth + cellSpacing
     let stepY = cellHeight + cellSpacing
     
@@ -84,7 +87,7 @@ final class GameScene : SKScene
           x: origin.x + (CGFloat(col) + 0.5) * stepX,
           y: origin.y + (CGFloat(row) + 0.5) * stepY,
         )
-        node.strokeColor = .appGreen
+        node.strokeColor = SKColor.gameGreen
         node.lineWidth = 3
         node.name = "cell_\(row)_\(col)"
         addChild(node)
@@ -92,9 +95,10 @@ final class GameScene : SKScene
     }
   }
 
-  override func didMove(to view: SKView)
+  override
+  func didMove(to view: SKView)
   {
-    self.backgroundColor = .backgroundColor
+    self.backgroundColor = SKColor.gameBackground
 
     drawCPUCores()
     
@@ -115,28 +119,32 @@ final class GameScene : SKScene
     ))
   }
   
-  // @todo: Add functionality to drag and drop tasks into CPU cores
-  override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
+  // TODO(dsd): Add functionality to drag and drop tasks into CPU cores
+  override
+  func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
   {
     nodeList.handleTouchesBegan(touches)
   }
 
-  override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?)
+  override
+  func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?)
   {
     nodeList.handleTouchesMoved(touches)
   }
 
-  override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?)
+  override
+  func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?)
   {
     nodeList.handleTouchesEnded()
   }
 
-  override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?)
+  override
+  func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?)
   {
     nodeList.handleTouchesEnded()
   }
 }
 
-// @todo: Add pause button
-// @todo: Add pause menu
-// @todo: render timer
+// TODO(dsd): Add pause button
+// TODO(dsd): Add pause menu
+// TODO(dsd): render timer

@@ -21,10 +21,10 @@ struct WorkloadTask : Identifiable
   var waitingTime: Float32
 }
 
+// NOTE(dsd): the raw values of this enum represent the
+// starvation threshold for each priority in seconds.
 enum Priority : Int32
 {
-  // @note: The raw values of this enum represent the
-  // starvation threshold for each priority in seconds.
   case Low = 30
   case Normal = 20
   case High = 10

@@ -10,7 +10,8 @@ import SwiftUI
 import GameKit
 
 @MainActor
-final class GameCenterViewModel : ObservableObject
+final
+class GameCenterViewModel : ObservableObject
 {
   @Published private(set) var avatar: UIImage?
   @Published var signedIn: Bool = false
@@ -48,7 +49,8 @@ final class GameCenterViewModel : ObservableObject
     self.gcManager.viewController = nil
   }
   
-  private func loadAvatar()
+  private
+  func loadAvatar()
   {
     self.gcManager.localPlayer.loadPhoto(for: .small) { [weak self] image, error in
       if let error
@@ -64,7 +66,7 @@ final class GameCenterViewModel : ObservableObject
   }
 }
 
-// helper struct to make the sheet presentation work with Identifiable
+//- dsd: helper struct to make the sheet presentation work with Identifiable
 struct IdentifiableViewController : Identifiable
 {
   let id = UUID()

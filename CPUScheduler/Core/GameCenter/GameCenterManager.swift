@@ -8,7 +8,8 @@
 import Combine
 import GameKit
 
-final class GameCenterManager
+final
+class GameCenterManager
 {
   private(set) var isAuthenticated = false
   private(set) var authenticationError: GameCenterError? = nil
@@ -25,7 +26,7 @@ final class GameCenterManager
       Task { [weak self] in
         guard let self else { return }
 
-        if let error
+        if error != nil
         {
           self.isAuthenticated = false
           self.authenticationError = GameCenterError.AuthenticationFailed

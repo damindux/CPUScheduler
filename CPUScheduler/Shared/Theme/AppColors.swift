@@ -10,14 +10,18 @@ import SpriteKit
 
 extension Color
 {
-  static let backgroundColor = Color(red: 0x13/255.0, green: 0x1B/255.0, blue: 0x2E/255.0)
-  static let appGreen = Color(red: 0x34/255.0, green: 0xD3/255.0, blue: 0x99/255.0)
-  static let appBlue = Color(red: 0x25/255.0, green: 0x63/255.0, blue: 0xEB/255.0)
+  static let appBlue = Color(red: 0.12, green: 0.35, blue: 0.96)
+  static let appGreen = Color(red: 0.02, green: 0.72, blue: 0.38)
+  static let appBackground = Color(red: 0.035, green: 0.055, blue: 0.095)
+  static let appPanel = Color(red: 0.075, green: 0.105, blue: 0.165)
+  static let appCyan = Color(red: 0.05, green: 0.83, blue: 0.95)
 }
 
 extension SKColor
 {
-  static let backgroundColor = SKColor(red: 0x13/255.0, green: 0x1B/255.0, blue: 0x2E/255.0, alpha: 1.0)
-  static let appGreen = SKColor(red: 0x34/255.0, green: 0xD3/255.0, blue: 0x99/255.0, alpha: 1.0)
-  static let appBlue = SKColor(red: 0x25/255.0, green: 0x63/255.0, blue: 0xEB/255.0, alpha: 1.0)
+  static let gameBlue = SKColor(red: 0.12, green: 0.35, blue: 0.96, alpha: 1.0)
+  static let gameGreen = SKColor(red: 0.02, green: 0.72, blue: 0.38, alpha: 1.0)
+  static let gameBackground = SKColor(red: 0.035, green: 0.055, blue: 0.095, alpha: 1.0)
+  static let gamePanel = SKColor(red: 0.075, green: 0.105, blue: 0.165, alpha: 1.0)
+  static let gameCyan = SKColor(red: 0.05, green: 0.83, blue: 0.95, alpha: 1.0)
 }
