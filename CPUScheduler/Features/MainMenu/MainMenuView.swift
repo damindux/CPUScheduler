@@ -76,8 +76,7 @@ struct MainMenuView : View
     .preferredColorScheme(.dark)
   }
   
-  private
-  var playerHeader: some View {
+  private var playerHeader: some View {
     HStack {
       if gcViewModel.signedIn
       {
@@ -165,8 +164,7 @@ struct MainMenuView : View
   }
   
   @ViewBuilder
-  private
-  var profileImage: some View {
+  private var profileImage: some View {
     if let avatar = gcViewModel.avatar
     {
       Image(uiImage: avatar)
@@ -185,8 +183,7 @@ struct MainMenuView : View
     }
   }
   
-  private
-  var title: some View {
+  private var title: some View {
     HStack(spacing: 7) {
       Text("CPU")
         .foregroundStyle(.white)
@@ -213,8 +210,7 @@ struct MainMenuView : View
     .shadow(color: Color.appCyan.opacity(0.2), radius: 18)
   }
   
-  private
-  var mainButtons: some View {
+  private var mainButtons: some View {
     VStack(spacing: 12) {
       
       //- dsd: Campaign mode button
@@ -403,8 +399,7 @@ struct MainMenuView : View
     }
   }
   
-  private
-  var signInButton: some View {
+  private var signInButton: some View {
     Button(action: authenticatePlayer) {
       HStack(spacing: 16) {
         Image(systemName: "person.crop.circle.badge.checkmark")

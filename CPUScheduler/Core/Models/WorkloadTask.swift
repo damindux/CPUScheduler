@@ -16,7 +16,7 @@ struct WorkloadTask : Identifiable
   let arrivalTime: TimeInterval
   let deadline: TimeInterval?
   let memoryRequired: Float32
-  var state: State
+  var state: TaskState
   var assignedCore: Int32
   var waitingTime: Float32
 }
@@ -30,7 +30,7 @@ enum Priority : Int32
   case High = 10
 }
 
-enum State
+enum TaskState
 {
   case Ready
   case Running

@@ -15,6 +15,7 @@ extension Color
   static let appBackground = Color(red: 0.035, green: 0.055, blue: 0.095)
   static let appPanel = Color(red: 0.075, green: 0.105, blue: 0.165)
   static let appCyan = Color(red: 0.05, green: 0.83, blue: 0.95)
+  static let appMuted = Color(red: 0.30, green: 0.32, blue: 0.36)
 }
 
 extension SKColor
