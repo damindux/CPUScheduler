@@ -22,9 +22,17 @@ class GameViewModel : ObservableObject
   @Published var gameStatus: GameStatus = .Ready
   @Published var score: Int32 = 0
   @Published var elapsedTime: Float32 = 0
+  @Published var remainingTime: TimeInterval = 0
   @Published var completedTasks: Array<Int32> = Array()
   
   @Published var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+  private var timerSubscription: AnyCancellable?
+
+  init()
+  {
+    timerSubscription = timer
+      .sink { [weak self] _ in self?.updateTimer() }
+  }
   
   func setupGame(level: Level)
   {
@@ -32,6 +40,7 @@ class GameViewModel : ObservableObject
     self.gameStatus = .Ready
     self.score = 0
     self.elapsedTime = 0
+    self.remainingTime = level.timeLimit
     self.completedTasks.removeAll()
   }
   
@@ -54,8 +63,22 @@ class GameViewModel : ObservableObject
   // So I have to create a mechanism to achieve this without
   // changing the task list.
   
-  // TODO(dsd): @feature add the timers in game view model
+  private 
+  func updateTimer()
+  {
+    guard gameStatus == .Ready, currentlevel.timeLimit > 0 else { return }
+
+    elapsedTime += 1
+    remainingTime = max(0, currentlevel.timeLimit - TimeInterval(elapsedTime))
+
+    if remainingTime == 0
+    {
+      gameStatus = .GameOver
+    }
+  }
 }
+
+extension GameStatus: Equatable {}
 
 enum GameStatus
 {

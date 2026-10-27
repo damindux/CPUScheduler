@@ -41,18 +41,20 @@ final class HorizontalNodeList : SKNode
   {
     contentNode.removeAllChildren()
 
-    var x: CGFloat = 0
+    var x: CGFloat = -viewportSize.width / 2
 
     for item in items
     {
-      item.position = CGPoint(x: x, y: 0)
+      // Items are positioned by their center so the first item is fully
+      // visible when the content starts at the left edge of the viewport.
+      item.position = CGPoint(x: x + item.frame.width / 2, y: 0)
       contentNode.addChild(item)
 
       x += item.frame.width + spacing
     }
 
-    let contentWidth = max(0, x - spacing)
-    minOffsetX = min(0, viewportSize.width / 2 - contentWidth)
+    let contentWidth = max(0, x + viewportSize.width / 2 - spacing)
+    minOffsetX = min(0, viewportSize.width - contentWidth)
 
     contentNode.position.x = max(
       min(0, contentNode.position.x),

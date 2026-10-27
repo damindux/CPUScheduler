@@ -10,14 +10,24 @@ import SpriteKit
 // TODO(dsd): create pause menu
 // TODO(dsd): create the levels
 // TODO(dsd): finish the game loop
-// TODO(dsd): create challenges view
 // TODO(dsd): find what is zPosition
-// TODO(dsd): fix layout issues
 // TODO(dsd): add functionality to pause menu
 
 final
 class GameScene : SKScene
 {
+  private
+  struct TaskCardData
+  {
+    let name: String
+    let subtitle: String
+    let tag: String
+    let memory: String
+    let status: String
+    let color: SKColor
+    let taskID: Int
+  }
+
   //- dsd: configuration
   let rows = 2
   let columns = 2
@@ -28,6 +38,7 @@ class GameScene : SKScene
   
   private let gameViewModel: GameViewModel
   private var pauseMenu: PauseScene?
+  var onMainMenu: (() -> Void)?
   
   private let monoFont = "JetBrainsMonoRoman-Bold"
   private let regularFont = "JetBrainsMonoRoman-Regular"
@@ -36,9 +47,8 @@ class GameScene : SKScene
     min(size.width / 390, size.height / 844)
   }
   
-  //- dsd: can limit the scale factor to 0.75
   private var unit: CGFloat {
-    max(scaleFactor, 0.75)
+    scaleFactor
   }
   
   init(gameViewModel: GameViewModel, size: CGSize)
@@ -54,33 +64,11 @@ class GameScene : SKScene
     fatalError("init(coder:) has not been implemented")
   }
   
-  private let nodeList = HorizontalNodeList(size: CGSize(width: 320, height: 125))
-
-  private
-  func drawIncomingTasks(position: CGPoint)
-  {
-    nodeList.position = position
-    addChild(nodeList)
-    
-    let items: Array<SKNode> = (1...10).map { number in
-      let node = SKShapeNode(
-        rectOf: CGSize(width: 175, height: 120),
-        cornerRadius: 8
-      )
-      
-      node.strokeColor = SKColor.gameBlue
-      node.lineWidth = 3
-
-      let label = SKLabelNode(text: "\(number)")
-      label.fontSize = 24
-      label.verticalAlignmentMode = .center
-      node.addChild(label)
-
-      return node
-    }
-
-    nodeList.setItems(items, spacing: 10)
-  }
+  private var nodeList: HorizontalNodeList?
+  private var draggedTask: SKNode?
+  private var draggedTaskOffset = CGPoint.zero
+  private weak var draggedTaskParent: SKNode?
+  private var draggedTaskOriginalPosition = CGPoint.zero
 
   //- dsd: scene lifecycle
   override
@@ -412,7 +400,8 @@ class GameScene : SKScene
     
     let cardHeight = 104 * unit
     
-    let firstY = sectionTop - 53 * unit
+    // Keep the first row below the section labels with a clear vertical gap.
+    let firstY = sectionTop - 15 * unit - cardHeight / 2
     let secondY = firstY - cardHeight - spacing
     
     let firstX = horizontalPadding + cardWidth / 2
@@ -792,193 +781,148 @@ class GameScene : SKScene
       alignment: .right
     )
 
-    let horizontalPadding = 16 * unit
-    let spacing = 8 * unit
-
-    let cardWidth = (size.width - 2 * horizontalPadding - spacing) / 2
-
-    let cardHeight = 76 * unit
-
-    let firstY = headingY - 56 * unit
-    let secondY = firstY - cardHeight - spacing
-
-    let firstX = horizontalPadding + cardWidth / 2
-    let secondX = firstX + cardWidth + spacing
-    
     // TODO(dsd): hard coded at the moment.
     // need to make it work according to tasks in a level
     #warning("Placeholder")
-    drawTaskCard(
+    let tasks = [
+      TaskCardData(
       name: "Task 4",
       subtitle: "Snapshot worker",
       tag: "⚡ URGENT",
       memory: "640 MB",
       status: "EXPIRING",
       color: SKColor.gameYellow,
-      position: CGPoint(x: firstX, y: firstY),
-      cardSize: CGSize(width: cardWidth, height: cardHeight),
       taskID: 4
-    )
-
-    drawTaskCard(
+      ),
+      TaskCardData(
       name: "Task 5",
       subtitle: "Disk sink cache",
       tag: "NORMAL",
       memory: "256 MB",
       status: "8.0s",
       color: SKColor.gameGreen,
-      position: CGPoint(x: secondX, y: firstY),
-      cardSize: CGSize(width: cardWidth, height: cardHeight),
       taskID: 5
-    )
-
-    drawTaskCard(
+      ),
+      TaskCardData(
       name: "Stream Sync",
       subtitle: "Waitlist queue #3",
       tag: "BATCH",
       memory: "1.5 GB",
       status: "15s",
       color: SKColor.gamePurple,
-      position: CGPoint(x: firstX, y: secondY),
-      cardSize: CGSize(width: cardWidth, height: cardHeight),
       taskID: 6
-    )
-
-    drawTaskCard(
+      ),
+      TaskCardData(
       name: "Log Drain",
       subtitle: "Telemetry pipeline",
       tag: "ASYNC",
       memory: "128 MB",
       status: "22s",
       color: SKColor.gameCyan,
-      position: CGPoint(x: secondX, y: secondY),
-      cardSize: CGSize(width: cardWidth, height: cardHeight),
       taskID: 7
-    )
+      )
+    ]
+
+    let viewportSize = CGSize(width: size.width - 32 * unit, height: 100 * unit)
+    let list = HorizontalNodeList(size: viewportSize)
+    list.position = CGPoint(x: size.width / 2, y: headingY - 76 * unit)
+    nodeList = list
+    addChild(list)
+
+    let cardSize = CGSize(width: 260 * unit, height: 88 * unit)
+    let items = tasks.map { makeTaskCard($0, size: cardSize) }
+    list.setItems(items, spacing: 10 * unit)
   }
-  
+
   private
-  func drawTaskCard(
-    name: String,
-    subtitle: String,
-    tag: String,
-    memory: String,
-    status: String,
-    color: SKColor,
-    position: CGPoint,
-    cardSize: CGSize,
-    taskID: Int
-  )
+  func makeTaskCard(_ task: TaskCardData, size cardSize: CGSize) -> SKNode
   {
-    let card = addPanel(
-      position: position,
-      size: cardSize,
-      fill: SKColor.gamePanel,
-      border: color.withAlphaComponent(0.65),
-      borderWidth: 1
-    )
+    let container = SKNode()
+    let rect = CGRect(x: -cardSize.width / 2, y: -cardSize.height / 2,
+                      width: cardSize.width, height: cardSize.height)
+    let card = SKShapeNode(rect: rect)
+    card.fillColor = SKColor.gamePanel
+    card.strokeColor = task.color.withAlphaComponent(0.65)
+    card.lineWidth = unit
+    card.name = "task_\(task.taskID)"
+    container.addChild(card)
 
-    card.name = "task_\(taskID)"
-
-    let left = position.x - cardSize.width / 2 + 10 * unit
-    let right = position.x + cardSize.width / 2 - 10 * unit
-    let top = position.y + cardSize.height / 2
+    let left = -cardSize.width / 2 + 10 * unit
+    let right = cardSize.width / 2 - 10 * unit
+    let top = cardSize.height / 2
 
     // dsd: task type badge
     let tagWidth = min(
-      CGFloat(tag.count * 7 + 14) * unit,
+      CGFloat(task.tag.count * 7 + 14) * unit,
       cardSize.width * 0.53
     )
-
-    addPanel(
-      position: CGPoint(
-        x: left + tagWidth / 2,
-        y: top - 16 * unit
-      ),
-      size: CGSize(
-        width: tagWidth,
-        height: 19 * unit
-      ),
-      fill: color.withAlphaComponent(0.15),
-      border: color.withAlphaComponent(0.5),
-      borderWidth: 0.8
-    )
-
-    addLabel(
-      tag,
-      position: CGPoint(
-        x: left + tagWidth / 2,
-        y: top - 16 * unit
-      ),
-      fontSize: 10,
-      color: color,
-      alignment: .center
-    )
+    addTaskCardBadge(task.tag, color: task.color, width: tagWidth,
+                     position: CGPoint(x: left + tagWidth / 2, y: top - 16 * unit),
+                     to: container)
 
     // dsd: memory badge
-    let memoryWidth = 42 * unit
-
-    addPanel(
-      position: CGPoint(
-        x: right - memoryWidth / 2,
-        y: top - 16 * unit
-      ),
-      size: CGSize(
-        width: memoryWidth,
-        height: 19 * unit
-      ),
-      fill: color.withAlphaComponent(0.05),
-      border: color,
-      borderWidth: 1
-    )
-
-    addLabel(
-      memory,
-      position: CGPoint(
-        x: right - memoryWidth / 2,
-        y: top - 16 * unit
-      ),
-      fontSize: 10,
-      color: color,
-      alignment: .center
-    )
+    let memoryWidth = 52 * unit
+    addTaskCardBadge(task.memory, color: task.color, width: memoryWidth,
+                     position: CGPoint(x: right - memoryWidth / 2, y: top - 16 * unit),
+                     to: container)
 
     // dsd: task title
-    addLabel(
-      name,
-      position: CGPoint(
-        x: left,
-        y: top - 34 * unit
-      ),
-      fontSize: 13,
-      color: .white,
-      font: monoFont
-    )
+    addTaskCardLabel(task.name, at: CGPoint(x: left, y: top - 37 * unit),
+                     size: 13, color: .white, font: monoFont, to: container)
 
     // dsd: status
-    addLabel(
-      status,
-      position: CGPoint(
-        x: right,
-        y: top - 34 * unit
-      ),
-      fontSize: 10,
-      color: taskID == 4 ? SKColor.gameRed : SKColor.gameSecondaryText,
-      alignment: .right
-    )
+    addTaskCardLabel(task.status, at: CGPoint(x: right, y: top - 37 * unit),
+                     size: 10, color: task.taskID == 4 ? SKColor.gameRed : SKColor.gameSecondaryText,
+                     alignment: .right, to: container)
 
     // dsd: description
-    addLabel(
-      subtitle,
-      position: CGPoint(
-        x: left,
-        y: position.y - cardSize.height / 2 + 14 * unit
-      ),
-      fontSize: 10,
-      color: SKColor.gameSecondaryText,
-      font: regularFont
-    )
-    .name = "task_\(taskID)"
+    addTaskCardLabel(task.subtitle, at: CGPoint(x: left, y: -cardSize.height / 2 + 14 * unit),
+                     size: 10, color: SKColor.gameSecondaryText, font: regularFont,
+                     to: container, name: "task_\(task.taskID)")
+
+    return container
+  }
+
+  private
+  func addTaskCardBadge(
+    _ text: String,
+    color: SKColor,
+    width: CGFloat,
+    position: CGPoint,
+    to parent: SKNode
+  )
+  {
+    let badge = SKShapeNode(rectOf: CGSize(width: width, height: 19 * unit))
+    badge.position = position
+    badge.fillColor = color.withAlphaComponent(0.12)
+    badge.strokeColor = color.withAlphaComponent(0.65)
+    badge.lineWidth = unit
+    parent.addChild(badge)
+    addTaskCardLabel(text, at: position, size: 10, color: color,
+                     alignment: .center, to: parent)
+  }
+
+  private
+  func addTaskCardLabel(
+    _ text: String,
+    at position: CGPoint,
+    size: CGFloat,
+    color: SKColor,
+    font: String? = nil,
+    alignment: SKLabelHorizontalAlignmentMode = .left,
+    to parent: SKNode,
+    name: String? = nil
+  )
+  {
+    let label = SKLabelNode(text: text)
+    label.fontName = font ?? monoFont
+    label.fontSize = size * unit
+    label.fontColor = color
+    label.horizontalAlignmentMode = alignment
+    label.verticalAlignmentMode = .center
+    label.position = position
+    label.name = name
+    parent.addChild(label)
   }
   
   //- dsd: handle pause menu
@@ -1014,7 +958,11 @@ class GameScene : SKScene
     }
     
     menu.onMainMenu = { [weak self] in
-      // TODO(dsd): navigate to main menu
+      guard let self else { return }
+      self.pauseMenu?.removeFromParent()
+      self.pauseMenu = nil
+      self.isPaused = false
+      self.onMainMenu?()
     }
     
     pauseMenu = menu
@@ -1022,7 +970,12 @@ class GameScene : SKScene
   }
   
   //- dsd: input
-  // TODO(dsd): Add functionality to drag and drop tasks into CPU cores
+  
+  // TODO(dsd): cannot scroll the task queue it triggers a drag and drop one
+  // so instead make the left and right swipe to scroll the queue and
+  // swipe up to take the task from the queue. if the task is not drag to
+  // a CPU core, the task should go back to the queue.
+  
   override
   func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
   {
@@ -1030,6 +983,7 @@ class GameScene : SKScene
     
     let location = touch.location(in: self)
     let hitNodes = nodes(at: location)
+    nodeList?.handleTouchesBegan(touches)
     
     if let pauseMenu
     {
@@ -1039,9 +993,11 @@ class GameScene : SKScene
     
     for node in nodes(at: location)
     {
-      guard node.name == "pause" else { return }
-      showPauseMenu()
-      return
+      if node.name == "pause"
+      {
+        showPauseMenu()
+        return
+      }
     }
     
     for node in hitNodes
@@ -1059,10 +1015,26 @@ class GameScene : SKScene
       
       if name.hasPrefix("task_")
       {
-        let taskNumber = name.replacingOccurrences(of: "task_", with: "")
-        
-        print("Dispatch requested for task \(taskNumber)")
-        // TODO(dsd): dispatch task to a selected CPU core.
+        // dsd: task hit targets can be either the card or its subtitle label
+        var taskNode: SKNode? = node
+        while let current = taskNode,
+              !current.children.contains(where: {
+                $0.name?.hasPrefix("task_") == true && $0 is SKShapeNode
+              })
+        {
+          taskNode = current.parent
+        }
+        guard let taskCard = taskNode, let parent = taskCard.parent else { return }
+        let scenePoint = location
+        let cardCenter = taskCard.convert(CGPoint.zero, to: self)
+        draggedTaskOffset = CGPoint(x: cardCenter.x - scenePoint.x, y: cardCenter.y - scenePoint.y)
+        draggedTaskParent = parent
+        draggedTaskOriginalPosition = taskCard.position
+        taskCard.removeFromParent()
+        addChild(taskCard)
+        taskCard.position = cardCenter
+        taskCard.zPosition = 1000
+        draggedTask = taskCard
         return
       }
       
@@ -1081,24 +1053,63 @@ class GameScene : SKScene
       }
     }
     
-    nodeList.handleTouchesBegan(touches)
   }
 
   override
   func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?)
   {
-    nodeList.handleTouchesMoved(touches)
+    if let touch = touches.first, let draggedTask
+    {
+      let point = touch.location(in: self)
+      draggedTask.position = CGPoint(x: point.x + draggedTaskOffset.x,
+                                     y: point.y + draggedTaskOffset.y)
+      return
+    }
+    nodeList?.handleTouchesMoved(touches)
   }
 
   override
   func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?)
   {
-    nodeList.handleTouchesEnded()
+    finishTaskDrag(at: touches.first?.location(in: self))
+    nodeList?.handleTouchesEnded()
   }
 
   override
   func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?)
   {
-    nodeList.handleTouchesEnded()
+    finishTaskDrag(at: nil)
+    nodeList?.handleTouchesEnded()
+  }
+
+  private
+  func finishTaskDrag(at point: CGPoint?)
+  {
+    guard let task = draggedTask else { return }
+    draggedTask = nil
+    task.zPosition = 0
+
+    guard let point, let destination = nodes(at: point).first(where: {
+      $0.name == "empty_core" || $0.name?.hasPrefix("core_") == true
+    })
+    else
+    {
+      task.removeFromParent()
+      if let parent = draggedTaskParent
+      {
+        parent.addChild(task)
+        task.position = draggedTaskOriginalPosition
+      }
+      draggedTaskParent = nil
+      return
+    }
+
+    let taskName = task.children.first(where: { $0.name?.hasPrefix("task_") == true })?.name ?? task.children.first(where: { $0 is SKShapeNode })?.name
+    let taskID = taskName?.replacingOccurrences(of: "task_", with: "") ?? "?"
+    let core = destination.name == "empty_core" ? "4" :
+      (destination.name?.replacingOccurrences(of: "core_", with: "") ?? "?")
+    print("Dispatch requested for task \(taskID) to core \(core)")
+    task.removeFromParent()
+    draggedTaskParent = nil
   }
 }

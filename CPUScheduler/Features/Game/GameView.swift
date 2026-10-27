@@ -10,6 +10,7 @@ import SpriteKit
 
 struct GameView : View
 {
+  @Environment(\.dismiss) private var dismiss
   private let gameViewModel = GameViewModel()
   
   var scene: SKScene {
@@ -18,6 +19,7 @@ struct GameView : View
       size: CGSize(width: 400, height: 800),
     )
     scene.scaleMode = .resizeFill
+    scene.onMainMenu = { dismiss() }
     return scene
   }
   

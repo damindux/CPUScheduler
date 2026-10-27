@@ -15,6 +15,7 @@ struct MainMenuView : View
   var body: some View {
     NavigationStack {
       GeometryReader { geometry in
+        let componentScale = min(max(geometry.size.width / 390, 0.72), 0.88)
         ZStack {
           Color.appBackground.ignoresSafeArea()
           
@@ -28,18 +29,22 @@ struct MainMenuView : View
           
           ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
-              playerHeader.padding(.top, 24)
+              playerHeader.padding(.top, 12)
               
               Image("CPUEmblem")
-                .padding(.top, geometry.size.height * 0.065)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 120 * componentScale, height: 120 * componentScale)
+                .padding(.top, geometry.size.height * 0.025)
               
-              title.padding(.top, 32)
+              title.padding(.top, 16)
               
-              Spacer(minLength: geometry.size.height * 0.085)
+              Color.clear
+                .frame(height: geometry.size.height * 0.035)
               
               if gcViewModel.signedIn
               {
-                mainButtons
+                mainButtons(scale: componentScale)
               }
               else
               {
@@ -47,7 +52,7 @@ struct MainMenuView : View
               }
             }
             .padding(.horizontal, 20)
-            .padding(.bottom, 36)
+            .padding(.bottom, 16)
             .frame(
               minHeight: geometry.size.height,
               alignment: .top
@@ -203,22 +208,22 @@ struct MainMenuView : View
           )
         )
     }
-    .font(Fonts.jbBold(35))
+    .font(Fonts.jbBold(30))
     .minimumScaleFactor(0.55)
     .lineLimit(1)
     .frame(maxWidth: .infinity)
     .shadow(color: Color.appCyan.opacity(0.2), radius: 18)
   }
   
-  private var mainButtons: some View {
-    VStack(spacing: 12) {
+  private func mainButtons(scale: CGFloat) -> some View {
+    VStack(spacing: 12 * scale) {
       
       //- dsd: Campaign mode button
       NavigationLink(destination: GameView()) {
-        HStack(spacing: 18) {
+        HStack(spacing: 18 * scale) {
           Image(systemName: "play.fill")
-            .font(Fonts.jbBold(28))
-            .frame(width: 76, height: 84)
+            .font(Fonts.jbBold(28 * scale))
+            .frame(width: 76 * scale, height: 84 * scale)
             .background(.white.opacity(0.17))
             .overlay {
               Rectangle()
@@ -228,9 +233,9 @@ struct MainMenuView : View
                 )
             }
           
-          VStack(alignment: .leading, spacing: 8) {
+          VStack(alignment: .leading, spacing: 8 * scale) {
             Text("PLAY NOW")
-              .font(Fonts.jbBold(24))
+              .font(Fonts.jbBold(24 * scale))
               .lineLimit(1)
               .minimumScaleFactor(0.7)
             
@@ -239,7 +244,7 @@ struct MainMenuView : View
             // if they completed it or just didn't start.
             #warning("Placeholder")
             Text("SECTOR 01 - DATABASE")
-              .font(Fonts.jbBold(13))
+              .font(Fonts.jbBold(13 * scale))
               .tracking(0.8)
               .lineLimit(1)
               .minimumScaleFactor(0.65)
@@ -249,8 +254,8 @@ struct MainMenuView : View
           Spacer(minLength: 0)
           
           Image(systemName: "arrow.right")
-            .font(.system(size: 23, weight: .semibold))
-            .frame(width: 42, height: 48)
+            .font(.system(size: 23 * scale, weight: .semibold))
+            .frame(width: 42 * scale, height: 48 * scale)
             .background(.black.opacity(0.15))
             .overlay {
               Rectangle()
@@ -261,8 +266,8 @@ struct MainMenuView : View
             }
         }
         .foregroundStyle(.white)
-        .padding(14)
-        .frame(maxWidth: .infinity, minHeight: 164)
+        .padding(14 * scale)
+        .frame(maxWidth: .infinity, minHeight: 132 * scale)
         .background(
           LinearGradient(
             colors: [
@@ -287,25 +292,26 @@ struct MainMenuView : View
       
       //- dsd: level select link
       NavigationLink(destination: LevelSelectView()) {
-        HStack(spacing: 22) {
+        HStack(spacing: 22 * scale) {
           MenuIcon(
             symbol: "square.grid.2x2",
             color: Color.appCyan,
-            background: Color.appCyan.opacity(0.08)
+            background: Color.appCyan.opacity(0.08),
+            scale: scale
           )
           
           Text("LEVEL SELECT")
-            .font(.system(size: 20, weight: .bold))
+            .font(.system(size: 20 * scale, weight: .bold))
             .foregroundStyle(.white.opacity(0.95))
           
           Spacer(minLength: 0)
           
           Image(systemName: "chevron.right")
-            .font(.system(size: 18, weight: .bold))
+            .font(.system(size: 18 * scale, weight: .bold))
             .foregroundStyle(.white.opacity(0.4))
         }
-        .padding(16)
-        .frame(maxWidth: .infinity, minHeight: 130)
+        .padding(16 * scale)
+        .frame(maxWidth: .infinity, minHeight: 102 * scale)
         .background(Color.appPanel)
         .overlay {
           Rectangle()
@@ -319,23 +325,24 @@ struct MainMenuView : View
       
       //- dsd: survival mode link
       NavigationLink(destination: GameView()) {
-        HStack(spacing: 22) {
+        HStack(spacing: 22 * scale) {
           MenuIcon(
             symbol: "cpu",
             color: .white,
-            background: .white.opacity(0.17)
+            background: .white.opacity(0.17),
+            scale: scale
           )
           
           Text("SURVIVAL MODE")
-            .font(.system(size: 20, weight: .bold))
+            .font(.system(size: 20 * scale, weight: .bold))
             .foregroundStyle(.white)
             .lineLimit(1)
             .minimumScaleFactor(0.7)
           
           Spacer(minLength: 0)
         }
-        .padding(16)
-        .frame(maxWidth: .infinity, minHeight: 130)
+        .padding(16 * scale)
+        .frame(maxWidth: .infinity, minHeight: 102 * scale)
         .background(
           LinearGradient(
             colors: [
@@ -366,11 +373,12 @@ struct MainMenuView : View
       .buttonStyle(.plain)
       
       //- dsd: navigations for challenges, ranks, settings
-      HStack(spacing: 12) {
+      HStack(spacing: 12 * scale) {
         NavigationCard(
           title: "CHALLENGES",
           symbol: "trophy.fill",
-          color: Color.orange
+          color: Color.orange,
+          scale: scale
         ) {
           ChallengesView()
         }
@@ -378,7 +386,8 @@ struct MainMenuView : View
         NavigationCard(
           title: "RANKS",
           symbol: "chart.bar.fill",
-          color: Color.appCyan
+          color: Color.appCyan,
+          scale: scale
         ) {
           LeaderboardView()
         }
@@ -390,7 +399,8 @@ struct MainMenuView : View
             red: 0.75,
             green: 0.80,
             blue: 0.88
-          )
+          ),
+          scale: scale
         ) {
           SettingsView()
         }
@@ -462,12 +472,13 @@ struct MenuIcon : View
   let symbol: String
   let color: Color
   let background: Color
+  var scale: CGFloat = 1
   
   var body: some View {
     Image(systemName: symbol)
-      .font(Fonts.jbBold(28))
+      .font(Fonts.jbBold(28 * scale))
       .foregroundStyle(color)
-      .frame(width: 70, height: 70)
+      .frame(width: 70 * scale, height: 70 * scale)
       .background(background)
       .overlay {
         Rectangle()
@@ -484,27 +495,30 @@ struct NavigationCard<Destination: View> : View
   let symbol: String
   let color: Color
   let destination: Destination
+  var scale: CGFloat = 1
   
   init(
     title: String,
     symbol: String,
     color: Color,
+    scale: CGFloat = 1,
     @ViewBuilder destination: () -> Destination
   )
   {
     self.title = title
     self.symbol = symbol
     self.color = color
+    self.scale = scale
     self.destination = destination()
   }
   
   var body: some View {
     NavigationLink(destination: destination) {
-      VStack(spacing: 14) {
+      VStack(spacing: 8 * scale) {
         Image(systemName: symbol)
-          .font(Fonts.jbBold(29))
+          .font(Fonts.jbBold(29 * scale))
           .foregroundStyle(color)
-          .frame(width: 64, height: 64)
+          .frame(width: 48 * scale, height: 48 * scale)
           .background(color.opacity(0.09))
           .overlay {
             Rectangle()
@@ -515,12 +529,12 @@ struct NavigationCard<Destination: View> : View
           }
         
         Text(title)
-          .font(Fonts.jbBold(12))
+          .font(Fonts.jbBold(12 * scale))
           .foregroundStyle(.white)
           .lineLimit(1)
           .minimumScaleFactor(0.6)
       }
-      .frame(maxWidth: .infinity, minHeight: 166)
+      .frame(maxWidth: .infinity, minHeight: 112 * scale)
       .background(
         Color(red: 0.065, green: 0.09, blue: 0.145)
       )
@@ -535,9 +549,6 @@ struct NavigationCard<Destination: View> : View
     .buttonStyle(.plain)
   }
 }
-
-// TODO(dsd): @issue need to adjust the sizes of the components to fit the
-// screen. It should automatically scale according to the screen.
 
 #Preview {
   MainMenuView()
