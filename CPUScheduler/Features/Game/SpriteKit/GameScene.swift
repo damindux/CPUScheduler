@@ -11,6 +11,9 @@ import SpriteKit
 // TODO(dsd): create the levels
 // TODO(dsd): finish the game loop
 // TODO(dsd): create challenges view
+// TODO(dsd): find what is zPosition
+// TODO(dsd): fix layout issues
+// TODO(dsd): add functionality to pause menu
 
 final
 class GameScene : SKScene
@@ -24,6 +27,7 @@ class GameScene : SKScene
   let cellSpacing: CGFloat = 10
   
   private let gameViewModel: GameViewModel
+  private var pauseMenu: PauseScene?
   
   private let monoFont = "JetBrainsMonoRoman-Bold"
   private let regularFont = "JetBrainsMonoRoman-Regular"
@@ -93,7 +97,7 @@ class GameScene : SKScene
   }
   
   //- dsd: drawing helpers
-  
+  //
   @discardableResult
   private
   func addPanel(
@@ -219,6 +223,7 @@ class GameScene : SKScene
   }
   
   //- dsd: header
+  //
   private
   func drawHeader()
   {
@@ -976,6 +981,46 @@ class GameScene : SKScene
     .name = "task_\(taskID)"
   }
   
+  //- dsd: handle pause menu
+  private
+  func showPauseMenu()
+  {
+    guard pauseMenu == nil else { return }
+    
+    // dsd: pause the game simulation
+    isPaused = true
+    
+    let menu = PauseScene(size: size)
+    
+    // dsd: keep the overlay visible when the scene is paused
+    menu.isPaused = false
+    
+    menu.onResume = { [weak self, weak menu] in
+      guard let self else { return }
+      
+      menu?.removeFromParent()
+      self.pauseMenu = nil
+      self.isPaused = false
+    }
+    
+    menu.onRestart = { [weak self, weak menu] in
+      guard let self else { return }
+      
+      menu?.removeFromParent()
+      self.pauseMenu = nil
+      self.isPaused = false
+      
+      // TODO(dsd): restart implementation goes here
+    }
+    
+    menu.onMainMenu = { [weak self] in
+      // TODO(dsd): navigate to main menu
+    }
+    
+    pauseMenu = menu
+    addChild(menu)
+  }
+  
   //- dsd: input
   // TODO(dsd): Add functionality to drag and drop tasks into CPU cores
   override
@@ -985,6 +1030,19 @@ class GameScene : SKScene
     
     let location = touch.location(in: self)
     let hitNodes = nodes(at: location)
+    
+    if let pauseMenu
+    {
+      pauseMenu.handleTouch(at: location)
+      return
+    }
+    
+    for node in nodes(at: location)
+    {
+      guard node.name == "pause" else { return }
+      showPauseMenu()
+      return
+    }
     
     for node in hitNodes
     {
