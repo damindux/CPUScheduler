@@ -539,7 +539,6 @@ struct NavigationCard<Destination: View> : View
 // TODO(dsd): @issue need to adjust the sizes of the components to fit the
 // screen. It should automatically scale according to the screen.
 
-#Preview
-{
+#Preview {
   MainMenuView()
 }
