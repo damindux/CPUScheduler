@@ -29,9 +29,24 @@ struct LevelSelectView : View
     ("SECTOR 3", "OVERCLOCK")
   ]
   
-  init()
+  let player: PlayerProfile
+  let onStartLevel: (Level) -> Void
+  
+  private var sectorLevels: Array<Level>
   {
-    levelSelectViewModel.configure(modelContext)
+    let sectorID = sectors[selectedSector].0
+
+    return levelSelectViewModel.levels
+      .filter { $0.sector == sectorID }
+      .sorted { $0.id < $1.id }
+  }
+  
+  //- dsd: "escaping" is needed here because i am
+  // assigning it to onStartLevel property.
+  init(player: PlayerProfile, onStartLevel: @escaping (Level) -> Void)
+  {
+    self.onStartLevel = onStartLevel
+    self.player = player
   }
 
   var body: some View {
@@ -64,8 +79,17 @@ struct LevelSelectView : View
       .toolbar(.hidden, for: .navigationBar)
       .preferredColorScheme(.dark)
     }
+    .task {
+      levelSelectViewModel.configure(modelContext)
+      
+      levelSelectViewModel.loadLevels(for: sectors[selectedSector].0)
+      levelSelectViewModel.loadCompletedLevels(for: player.gamePlayerID)
+    }
+    .onChange(of: selectedSector) {
+      levelSelectViewModel.loadLevels(for: sectors[selectedSector].0)
+    }
   }
-
+  
   private
   func header(_ scale: Float64) -> some View
   {
@@ -176,86 +200,69 @@ struct LevelSelectView : View
       .lineLimit(1)
     }
   }
+  
+  //- dsd: level unlocking happens sequentially
+  // completing a level unlocks next one
+  private
+  func isLevelUnlocked(_ level: Level) -> Bool
+  {
+    let allLevels = levelSelectViewModel.levels.sorted { $0.id < $1.id }
+
+    guard let index = allLevels.firstIndex(where: { $0.id == level.id })
+    else
+    {
+      return false
+    }
+
+    //- dsd: the first level is always unlocked.
+    if index == 0
+    {
+      return true
+    }
+
+    let previousLevel = allLevels[index - 1]
+
+    return levelSelectViewModel.completedLevelIDs.contains(previousLevel.id)
+  }
 
   // TODO(dsd): this should load according to the level list
   @ViewBuilder
   private var levelList: some View {
-    let levels = levelSelectViewModel.levels
-    // TODO(dsd): use these levels to populate this.
+    let levels = sectorLevels
     
-    switch selectedSector
-    {
-    case 0:
-      VStack(spacing: 12) {
-        ClearedLevelCard(
-          number: "01",
-          title: "Boot Sequence",
-          onReplay: {
-            // TODO(dsd): Load level 1.
-          }
-        )
+    VStack(spacing: 12) {
+      ForEach(Array(levels.enumerated()), id: \.element.id) { index, level in
+        let isCompleted = levelSelectViewModel.completedLevelIDs.contains(level.id)
 
-        ClearedLevelCard(
-          number: "02",
-          title: "Web Server",
-          onReplay: {
-            // TODO(dsd): Load level 2.
-          }
-        )
+        let isUnlocked = isLevelUnlocked(level)
 
-        CurrentLevelCard(
-          number: "03",
-          title: "Database Migration",
-          objective: "Beat under 20s"
-        ) {
-          // TODO(dsd): Start level 3.
+        if isCompleted
+        {
+          ClearedLevelCard(
+            number: String(format: "%02d", index + 1),
+            title: level.name,
+            onReplay: {
+              onStartLevel(level)
+            }
+          )
         }
-
-        LockedLevelCard(
-          number: "04",
-          title: "Memory Pressure"
-        )
-
-        LockedLevelCard(
-          number: "05",
-          title: "Deadline Rush"
-        )
-      }
-
-    case 1:
-      VStack(spacing: 12) {
-        LockedLevelCard(
-          number: "01",
-          title: "Request Queue"
-        )
-
-        LockedLevelCard(
-          number: "02",
-          title: "Load Balancing"
-        )
-
-        LockedLevelCard(
-          number: "03",
-          title: "Distributed Cache"
-        )
-      }
-
-    default:
-      VStack(spacing: 12) {
-        LockedLevelCard(
-          number: "01",
-          title: "Thermal Limits"
-        )
-
-        LockedLevelCard(
-          number: "02",
-          title: "Priority Inversion"
-        )
-
-        LockedLevelCard(
-          number: "03",
-          title: "Maximum Throughput"
-        )
+        else if isUnlocked
+        {
+          CurrentLevelCard(
+            number: String(format: "%02d", index + 1),
+            title: level.name,
+            objective: "Complete within \(Int(level.timeLimit))s"
+          ) {
+            onStartLevel(level)
+          }
+        }
+        else
+        {
+          LockedLevelCard(
+            number: String(format: "%02d", index + 1),
+            title: level.name
+          )
+        }
       }
     }
   }
@@ -488,6 +495,6 @@ struct LockedLevelCard : View
 
 #Preview {
   NavigationStack {
-    LevelSelectView()
+  //  LevelSelectView()
   }
 }

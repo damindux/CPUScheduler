@@ -15,6 +15,7 @@ class LevelSelectViewModel : ObservableObject
   private var modelContext: ModelContext?
   
   @Published private(set) var levels: Array<Level> = Array()
+  @Published private(set) var completedLevelIDs: Set<String> = Set()
   
   func configure(_ modelContext: ModelContext)
   {
@@ -35,6 +36,22 @@ class LevelSelectViewModel : ObservableObject
       sortBy: [SortDescriptor(\.name)]
     )
     
-    levels = (try? modelContext.fetch(descriptor)) ?? []
+    levels = (try? modelContext.fetch(descriptor)) ?? Array<Level>()
+  }
+  
+  //- dsd: populates the completedLevelIDs set
+  func loadCompletedLevels(for gamePlayerID: String)
+  {
+    guard let modelContext else { return }
+
+    let predicate = #Predicate<LevelProgress> { progress in
+      progress.isCompleted &&
+      progress.player?.gamePlayerID == gamePlayerID
+    }
+    let descriptor = FetchDescriptor<LevelProgress>(predicate: predicate)
+
+    let progressRecords = (try? modelContext.fetch(descriptor)) ?? Array<LevelProgress>()
+
+    completedLevelIDs = Set(progressRecords.map { $0.levelID })
   }
 }
