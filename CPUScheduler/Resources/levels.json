@@ -1,0 +1,773 @@
+{
+  "levels": [
+    {
+      "id": "s1-l1",
+      "name": "First Dispatch",
+      "sector": "SECTOR 1",
+      "noOfCPUCores": 1,
+      "availableMemory": 512,
+      "difficulty": "Easy",
+      "timeLimit": 40,
+      "tasks": [
+        {
+          "id": "s1-l1-t1",
+          "cpuBurst": 3,
+          "priority": 20,
+          "arrivalTime": 0,
+          "deadline": null,
+          "memoryRequired": 80
+        },
+        {
+          "id": "s1-l1-t2",
+          "cpuBurst": 5,
+          "priority": 20,
+          "arrivalTime": 0,
+          "deadline": null,
+          "memoryRequired": 96
+        },
+        {
+          "id": "s1-l1-t3",
+          "cpuBurst": 4,
+          "priority": 20,
+          "arrivalTime": 2,
+          "deadline": null,
+          "memoryRequired": 112
+        },
+        {
+          "id": "s1-l1-t4",
+          "cpuBurst": 6,
+          "priority": 20,
+          "arrivalTime": 5,
+          "deadline": null,
+          "memoryRequired": 128
+        }
+      ]
+    },
+    {
+      "id": "s1-l2",
+      "name": "A Busy Desk",
+      "sector": "SECTOR 1",
+      "noOfCPUCores": 1,
+      "availableMemory": 512,
+      "difficulty": "Easy",
+      "timeLimit": 48,
+      "tasks": [
+        {
+          "id": "s1-l2-t1",
+          "cpuBurst": 6,
+          "priority": 20,
+          "arrivalTime": 0,
+          "deadline": null,
+          "memoryRequired": 96
+        },
+        {
+          "id": "s1-l2-t2",
+          "cpuBurst": 3,
+          "priority": 20,
+          "arrivalTime": 1,
+          "deadline": null,
+          "memoryRequired": 64
+        },
+        {
+          "id": "s1-l2-t3",
+          "cpuBurst": 8,
+          "priority": 20,
+          "arrivalTime": 2,
+          "deadline": null,
+          "memoryRequired": 128
+        },
+        {
+          "id": "s1-l2-t4",
+          "cpuBurst": 4,
+          "priority": 20,
+          "arrivalTime": 6,
+          "deadline": null,
+          "memoryRequired": 96
+        },
+        {
+          "id": "s1-l2-t5",
+          "cpuBurst": 5,
+          "priority": 20,
+          "arrivalTime": 8,
+          "deadline": null,
+          "memoryRequired": 96
+        }
+      ]
+    },
+    {
+      "id": "s1-l3",
+      "name": "Two Lanes",
+      "sector": "SECTOR 1",
+      "noOfCPUCores": 2,
+      "availableMemory": 768,
+      "difficulty": "Easy",
+      "timeLimit": 52,
+      "tasks": [
+        {
+          "id": "s1-l3-t1",
+          "cpuBurst": 8,
+          "priority": 20,
+          "arrivalTime": 0,
+          "deadline": null,
+          "memoryRequired": 128
+        },
+        {
+          "id": "s1-l3-t2",
+          "cpuBurst": 4,
+          "priority": 20,
+          "arrivalTime": 0,
+          "deadline": null,
+          "memoryRequired": 96
+        },
+        {
+          "id": "s1-l3-t3",
+          "cpuBurst": 9,
+          "priority": 20,
+          "arrivalTime": 2,
+          "deadline": null,
+          "memoryRequired": 160
+        },
+        {
+          "id": "s1-l3-t4",
+          "cpuBurst": 3,
+          "priority": 20,
+          "arrivalTime": 3,
+          "deadline": null,
+          "memoryRequired": 64
+        },
+        {
+          "id": "s1-l3-t5",
+          "cpuBurst": 6,
+          "priority": 20,
+          "arrivalTime": 5,
+          "deadline": null,
+          "memoryRequired": 128
+        },
+        {
+          "id": "s1-l3-t6",
+          "cpuBurst": 5,
+          "priority": 20,
+          "arrivalTime": 7,
+          "deadline": null,
+          "memoryRequired": 128
+        }
+      ]
+    },
+    {
+      "id": "s1-l4",
+      "name": "The Long Job",
+      "sector": "SECTOR 1",
+      "noOfCPUCores": 2,
+      "availableMemory": 768,
+      "difficulty": "Medium",
+      "timeLimit": 62,
+      "tasks": [
+        {
+          "id": "s1-l4-t1",
+          "cpuBurst": 14,
+          "priority": 20,
+          "arrivalTime": 0,
+          "deadline": null,
+          "memoryRequired": 160
+        },
+        {
+          "id": "s1-l4-t2",
+          "cpuBurst": 4,
+          "priority": 20,
+          "arrivalTime": 0,
+          "deadline": null,
+          "memoryRequired": 96
+        },
+        {
+          "id": "s1-l4-t3",
+          "cpuBurst": 3,
+          "priority": 20,
+          "arrivalTime": 1,
+          "deadline": null,
+          "memoryRequired": 64
+        },
+        {
+          "id": "s1-l4-t4",
+          "cpuBurst": 7,
+          "priority": 20,
+          "arrivalTime": 3,
+          "deadline": null,
+          "memoryRequired": 128
+        },
+        {
+          "id": "s1-l4-t5",
+          "cpuBurst": 5,
+          "priority": 20,
+          "arrivalTime": 5,
+          "deadline": null,
+          "memoryRequired": 96
+        },
+        {
+          "id": "s1-l4-t6",
+          "cpuBurst": 4,
+          "priority": 20,
+          "arrivalTime": 7,
+          "deadline": null,
+          "memoryRequired": 96
+        },
+        {
+          "id": "s1-l4-t7",
+          "cpuBurst": 8,
+          "priority": 20,
+          "arrivalTime": 9,
+          "deadline": null,
+          "memoryRequired": 128
+        }
+      ]
+    },
+    {
+      "id": "s1-l5",
+      "name": "Loaded Queue",
+      "sector": "SECTOR 1",
+      "noOfCPUCores": 2,
+      "availableMemory": 1024,
+      "difficulty": "Medium",
+      "timeLimit": 70,
+      "tasks": [
+        {
+          "id": "s1-l5-t1",
+          "cpuBurst": 12,
+          "priority": 20,
+          "arrivalTime": 0,
+          "deadline": null,
+          "memoryRequired": 160
+        },
+        {
+          "id": "s1-l5-t2",
+          "cpuBurst": 3,
+          "priority": 20,
+          "arrivalTime": 0,
+          "deadline": null,
+          "memoryRequired": 64
+        },
+        {
+          "id": "s1-l5-t3",
+          "cpuBurst": 7,
+          "priority": 20,
+          "arrivalTime": 1,
+          "deadline": null,
+          "memoryRequired": 128
+        },
+        {
+          "id": "s1-l5-t4",
+          "cpuBurst": 4,
+          "priority": 20,
+          "arrivalTime": 2,
+          "deadline": null,
+          "memoryRequired": 96
+        },
+        {
+          "id": "s1-l5-t5",
+          "cpuBurst": 10,
+          "priority": 20,
+          "arrivalTime": 4,
+          "deadline": null,
+          "memoryRequired": 192
+        },
+        {
+          "id": "s1-l5-t6",
+          "cpuBurst": 5,
+          "priority": 20,
+          "arrivalTime": 6,
+          "deadline": null,
+          "memoryRequired": 96
+        },
+        {
+          "id": "s1-l5-t7",
+          "cpuBurst": 8,
+          "priority": 20,
+          "arrivalTime": 8,
+          "deadline": null,
+          "memoryRequired": 128
+        },
+        {
+          "id": "s1-l5-t8",
+          "cpuBurst": 5,
+          "priority": 20,
+          "arrivalTime": 10,
+          "deadline": null,
+          "memoryRequired": 128
+        }
+      ]
+    },
+    {
+      "id": "s2-l1",
+      "name": "Priority Basics",
+      "sector": "SECTOR 2",
+      "noOfCPUCores": 2,
+      "availableMemory": 1024,
+      "difficulty": "Medium",
+      "timeLimit": 72,
+      "tasks": [
+        {
+          "id": "s2-l1-t1",
+          "cpuBurst": 8,
+          "priority": 20,
+          "arrivalTime": 0,
+          "deadline": null,
+          "memoryRequired": 128
+        },
+        {
+          "id": "s2-l1-t2",
+          "cpuBurst": 3,
+          "priority": 10,
+          "arrivalTime": 0,
+          "deadline": null,
+          "memoryRequired": 96
+        },
+        {
+          "id": "s2-l1-t3",
+          "cpuBurst": 10,
+          "priority": 30,
+          "arrivalTime": 1,
+          "deadline": null,
+          "memoryRequired": 160
+        },
+        {
+          "id": "s2-l1-t4",
+          "cpuBurst": 4,
+          "priority": 10,
+          "arrivalTime": 3,
+          "deadline": null,
+          "memoryRequired": 96
+        },
+        {
+          "id": "s2-l1-t5",
+          "cpuBurst": 5,
+          "priority": 20,
+          "arrivalTime": 4,
+          "deadline": null,
+          "memoryRequired": 128
+        },
+        {
+          "id": "s2-l1-t6",
+          "cpuBurst": 12,
+          "priority": 30,
+          "arrivalTime": 6,
+          "deadline": null,
+          "memoryRequired": 192
+        },
+        {
+          "id": "s2-l1-t7",
+          "cpuBurst": 3,
+          "priority": 20,
+          "arrivalTime": 8,
+          "deadline": null,
+          "memoryRequired": 96
+        }
+      ]
+    },
+    {
+      "id": "s2-l2",
+      "name": "Priority Triage",
+      "sector": "SECTOR 2",
+      "noOfCPUCores": 3,
+      "availableMemory": 1280,
+      "difficulty": "Medium",
+      "timeLimit": 78,
+      "tasks": [
+        {
+          "id": "s2-l2-t1",
+          "cpuBurst": 10,
+          "priority": 30,
+          "arrivalTime": 0,
+          "deadline": null,
+          "memoryRequired": 128
+        },
+        {
+          "id": "s2-l2-t2",
+          "cpuBurst": 4,
+          "priority": 10,
+          "arrivalTime": 0,
+          "deadline": null,
+          "memoryRequired": 96
+        },
+        {
+          "id": "s2-l2-t3",
+          "cpuBurst": 13,
+          "priority": 20,
+          "arrivalTime": 1,
+          "deadline": null,
+          "memoryRequired": 192
+        },
+        {
+          "id": "s2-l2-t4",
+          "cpuBurst": 3,
+          "priority": 10,
+          "arrivalTime": 2,
+          "deadline": null,
+          "memoryRequired": 96
+        },
+        {
+          "id": "s2-l2-t5",
+          "cpuBurst": 6,
+          "priority": 20,
+          "arrivalTime": 4,
+          "deadline": null,
+          "memoryRequired": 160
+        },
+        {
+          "id": "s2-l2-t6",
+          "cpuBurst": 4,
+          "priority": 30,
+          "arrivalTime": 5,
+          "deadline": null,
+          "memoryRequired": 128
+        },
+        {
+          "id": "s2-l2-t7",
+          "cpuBurst": 9,
+          "priority": 20,
+          "arrivalTime": 7,
+          "deadline": null,
+          "memoryRequired": 192
+        },
+        {
+          "id": "s2-l2-t8",
+          "cpuBurst": 5,
+          "priority": 10,
+          "arrivalTime": 9,
+          "deadline": null,
+          "memoryRequired": 128
+        }
+      ]
+    },
+    {
+      "id": "s2-l3",
+      "name": "Starvation Risk",
+      "sector": "SECTOR 2",
+      "noOfCPUCores": 3,
+      "availableMemory": 1280,
+      "difficulty": "Hard",
+      "timeLimit": 84,
+      "tasks": [
+        {
+          "id": "s2-l3-t1",
+          "cpuBurst": 16,
+          "priority": 30,
+          "arrivalTime": 0,
+          "deadline": null,
+          "memoryRequired": 160
+        },
+        {
+          "id": "s2-l3-t2",
+          "cpuBurst": 3,
+          "priority": 10,
+          "arrivalTime": 0,
+          "deadline": null,
+          "memoryRequired": 64
+        },
+        {
+          "id": "s2-l3-t3",
+          "cpuBurst": 5,
+          "priority": 10,
+          "arrivalTime": 1,
+          "deadline": null,
+          "memoryRequired": 96
+        },
+        {
+          "id": "s2-l3-t4",
+          "cpuBurst": 4,
+          "priority": 20,
+          "arrivalTime": 2,
+          "deadline": null,
+          "memoryRequired": 128
+        },
+        {
+          "id": "s2-l3-t5",
+          "cpuBurst": 12,
+          "priority": 30,
+          "arrivalTime": 3,
+          "deadline": null,
+          "memoryRequired": 160
+        },
+        {
+          "id": "s2-l3-t6",
+          "cpuBurst": 2,
+          "priority": 10,
+          "arrivalTime": 5,
+          "deadline": null,
+          "memoryRequired": 64
+        },
+        {
+          "id": "s2-l3-t7",
+          "cpuBurst": 8,
+          "priority": 20,
+          "arrivalTime": 6,
+          "deadline": null,
+          "memoryRequired": 160
+        },
+        {
+          "id": "s2-l3-t8",
+          "cpuBurst": 3,
+          "priority": 10,
+          "arrivalTime": 8,
+          "deadline": null,
+          "memoryRequired": 96
+        },
+        {
+          "id": "s2-l3-t9",
+          "cpuBurst": 7,
+          "priority": 20,
+          "arrivalTime": 10,
+          "deadline": null,
+          "memoryRequired": 128
+        }
+      ]
+    },
+    {
+      "id": "s3-l1",
+      "name": "Deadlines Arrive",
+      "sector": "SECTOR 3",
+      "noOfCPUCores": 3,
+      "availableMemory": 1536,
+      "difficulty": "Hard",
+      "timeLimit": 86,
+      "tasks": [
+        {
+          "id": "s3-l1-t1",
+          "cpuBurst": 5,
+          "priority": 10,
+          "arrivalTime": 0,
+          "deadline": 12,
+          "memoryRequired": 128
+        },
+        {
+          "id": "s3-l1-t2",
+          "cpuBurst": 8,
+          "priority": 20,
+          "arrivalTime": 0,
+          "deadline": 24,
+          "memoryRequired": 160
+        },
+        {
+          "id": "s3-l1-t3",
+          "cpuBurst": 3,
+          "priority": 30,
+          "arrivalTime": 2,
+          "deadline": 19,
+          "memoryRequired": 96
+        },
+        {
+          "id": "s3-l1-t4",
+          "cpuBurst": 10,
+          "priority": 20,
+          "arrivalTime": 3,
+          "deadline": 31,
+          "memoryRequired": 192
+        },
+        {
+          "id": "s3-l1-t5",
+          "cpuBurst": 4,
+          "priority": 10,
+          "arrivalTime": 6,
+          "deadline": 30,
+          "memoryRequired": 128
+        },
+        {
+          "id": "s3-l1-t6",
+          "cpuBurst": 12,
+          "priority": 30,
+          "arrivalTime": 8,
+          "deadline": 47,
+          "memoryRequired": 224
+        },
+        {
+          "id": "s3-l1-t7",
+          "cpuBurst": 2,
+          "priority": 10,
+          "arrivalTime": 10,
+          "deadline": 25,
+          "memoryRequired": 64
+        },
+        {
+          "id": "s3-l1-t8",
+          "cpuBurst": 6,
+          "priority": 20,
+          "arrivalTime": 12,
+          "deadline": 44,
+          "memoryRequired": 160
+        }
+      ]
+    },
+    {
+      "id": "s3-l2",
+      "name": "Deadline Pressure",
+      "sector": "SECTOR 3",
+      "noOfCPUCores": 3,
+      "availableMemory": 1536,
+      "difficulty": "Hard",
+      "timeLimit": 94,
+      "tasks": [
+        {
+          "id": "s3-l2-t1",
+          "cpuBurst": 9,
+          "priority": 30,
+          "arrivalTime": 0,
+          "deadline": 16,
+          "memoryRequired": 160
+        },
+        {
+          "id": "s3-l2-t2",
+          "cpuBurst": 3,
+          "priority": 10,
+          "arrivalTime": 0,
+          "deadline": 18,
+          "memoryRequired": 96
+        },
+        {
+          "id": "s3-l2-t3",
+          "cpuBurst": 14,
+          "priority": 20,
+          "arrivalTime": 1,
+          "deadline": 34,
+          "memoryRequired": 256
+        },
+        {
+          "id": "s3-l2-t4",
+          "cpuBurst": 4,
+          "priority": 10,
+          "arrivalTime": 4,
+          "deadline": 27,
+          "memoryRequired": 128
+        },
+        {
+          "id": "s3-l2-t5",
+          "cpuBurst": 7,
+          "priority": 20,
+          "arrivalTime": 5,
+          "deadline": 35,
+          "memoryRequired": 192
+        },
+        {
+          "id": "s3-l2-t6",
+          "cpuBurst": 11,
+          "priority": 30,
+          "arrivalTime": 7,
+          "deadline": 48,
+          "memoryRequired": 224
+        },
+        {
+          "id": "s3-l2-t7",
+          "cpuBurst": 2,
+          "priority": 10,
+          "arrivalTime": 9,
+          "deadline": 28,
+          "memoryRequired": 64
+        },
+        {
+          "id": "s3-l2-t8",
+          "cpuBurst": 8,
+          "priority": 20,
+          "arrivalTime": 10,
+          "deadline": 52,
+          "memoryRequired": 256
+        },
+        {
+          "id": "s3-l2-t9",
+          "cpuBurst": 5,
+          "priority": 10,
+          "arrivalTime": 13,
+          "deadline": 56,
+          "memoryRequired": 128
+        }
+      ]
+    },
+    {
+      "id": "s3-l3",
+      "name": "Final Overload",
+      "sector": "SECTOR 3",
+      "noOfCPUCores": 4,
+      "availableMemory": 2048,
+      "difficulty": "VeryHard",
+      "timeLimit": 104,
+      "tasks": [
+        {
+          "id": "s3-l3-t1",
+          "cpuBurst": 12,
+          "priority": 30,
+          "arrivalTime": 0,
+          "deadline": 19,
+          "memoryRequired": 192
+        },
+        {
+          "id": "s3-l3-t2",
+          "cpuBurst": 4,
+          "priority": 10,
+          "arrivalTime": 0,
+          "deadline": 22,
+          "memoryRequired": 128
+        },
+        {
+          "id": "s3-l3-t3",
+          "cpuBurst": 7,
+          "priority": 20,
+          "arrivalTime": 1,
+          "deadline": 28,
+          "memoryRequired": 160
+        },
+        {
+          "id": "s3-l3-t4",
+          "cpuBurst": 15,
+          "priority": 30,
+          "arrivalTime": 2,
+          "deadline": 41,
+          "memoryRequired": 256
+        },
+        {
+          "id": "s3-l3-t5",
+          "cpuBurst": 3,
+          "priority": 10,
+          "arrivalTime": 5,
+          "deadline": 27,
+          "memoryRequired": 96
+        },
+        {
+          "id": "s3-l3-t6",
+          "cpuBurst": 9,
+          "priority": 20,
+          "arrivalTime": 7,
+          "deadline": 44,
+          "memoryRequired": 224
+        },
+        {
+          "id": "s3-l3-t7",
+          "cpuBurst": 5,
+          "priority": 10,
+          "arrivalTime": 8,
+          "deadline": 36,
+          "memoryRequired": 128
+        },
+        {
+          "id": "s3-l3-t8",
+          "cpuBurst": 16,
+          "priority": 30,
+          "arrivalTime": 10,
+          "deadline": 62,
+          "memoryRequired": 320
+        },
+        {
+          "id": "s3-l3-t9",
+          "cpuBurst": 2,
+          "priority": 10,
+          "arrivalTime": 12,
+          "deadline": 37,
+          "memoryRequired": 64
+        },
+        {
+          "id": "s3-l3-t10",
+          "cpuBurst": 8,
+          "priority": 20,
+          "arrivalTime": 14,
+          "deadline": 57,
+          "memoryRequired": 224
+        }
+      ]
+    }
+  ]
+}

@@ -5,35 +5,52 @@
 //  Created by Student3 on 2026-10-05.
 //
 
-import SwiftUI
+import Foundation
+import SwiftData
 
-struct WorkloadTask : Identifiable
+@Model
+final
+class WorkloadTask
 {
-  let id = UUID()
-  let cpuBurst: Float32
+  @Attribute(.unique)
+  var id: String
+  
+  var cpuBurst: Float32
   var remainingTime: Float32
   var priority: Priority
-  let arrivalTime: TimeInterval
-  let deadline: TimeInterval?
-  let memoryRequired: Float32
+  var arrivalTime: TimeInterval
+  var deadline: TimeInterval?
+  var memoryRequired: Float32
   var state: TaskState
   var assignedCore: Int32
   var waitingTime: Float32
-}
-
-// NOTE(dsd): the raw values of this enum represent the
-// starvation threshold for each priority in seconds.
-enum Priority : Int32
-{
-  case Low = 30
-  case Normal = 20
-  case High = 10
-}
-
-enum TaskState
-{
-  case Ready
-  case Running
-  case IOWait
-  case Completed
+  
+  var level: Level?
+  
+  init(
+    id: String,
+    cpuBurst: Float32,
+    remainingTime: Float32,
+    priority: Priority,
+    arrivalTime: TimeInterval,
+    deadline: TimeInterval?,
+    memoryRequired: Float32,
+    state: TaskState,
+    assignedCore: Int32,
+    waitingTime: Float32,
+    level: Level? = nil
+  )
+  {
+    self.id = id
+    self.cpuBurst = cpuBurst
+    self.remainingTime = remainingTime
+    self.priority = priority
+    self.arrivalTime = arrivalTime
+    self.deadline = deadline
+    self.memoryRequired = memoryRequired
+    self.state = state
+    self.assignedCore = assignedCore
+    self.waitingTime = waitingTime
+    self.level = level
+  }
 }

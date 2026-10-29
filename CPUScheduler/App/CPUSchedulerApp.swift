@@ -6,13 +6,21 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct CPUSchedulerApp : App
 {
   var body: some Scene {
     WindowGroup {
-      MainMenuView()
+      AppRootView()
     }
+    .modelContainer(
+      for: [
+        Level.self,
+        WorkloadTask.self,
+        PlayerProfile.self,
+        LevelProgress.self,
+      ])
   }
 }

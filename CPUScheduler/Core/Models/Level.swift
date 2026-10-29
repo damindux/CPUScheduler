@@ -5,23 +5,48 @@
 //  Created by Student3 on 2026-10-05.
 //
 
-import SwiftUI
+import Foundation
+import SwiftData
 
-struct Level : Identifiable
+@Model
+final
+class Level
 {
-  let id = UUID()
-  let name: String
-  let noOfCPUCores: Int32
-  let availableMemory: Int32
-  let tasks: Array<WorkloadTask>
-  let difficulty: Difficulty
-  let timeLimit: TimeInterval
+  @Attribute(.unique)
+  var id: String
+  
+  var name: String
+  var noOfCPUCores: Int32
+  var availableMemory: Int32
+  var difficulty: Difficulty
+  var timeLimit: TimeInterval
+  var sector: String
+  
+  // TODO(dsd): check whether this is actually necessary or not
+  @Relationship(deleteRule: .cascade, inverse: \WorkloadTask.level)
+  var tasks: Array<WorkloadTask>
+  
+  init(
+    id: String,
+    name: String,
+    noOfCPUCores: Int32,
+    availableMemory: Int32,
+    difficulty: Difficulty,
+    timeLimit: TimeInterval,
+    sector: String,
+    tasks: Array<WorkloadTask> = []
+  )
+  {
+    self.id = id
+    self.name = name
+    self.noOfCPUCores = noOfCPUCores
+    self.availableMemory = availableMemory
+    self.difficulty = difficulty
+    self.timeLimit = timeLimit
+    self.sector = sector
+    self.tasks = tasks
+  }
 }
 
-enum Difficulty
-{
-  case Easy
-  case Medium
-  case Hard
-  case VeryHard
-}
+// TODO(dsd): daily challenge should be a seperate model.
+// with a Level and objective field.

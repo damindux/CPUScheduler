@@ -15,7 +15,9 @@ struct MainMenuView : View
   var body: some View {
     NavigationStack {
       GeometryReader { geometry in
+        
         let componentScale = min(max(geometry.size.width / 390, 0.72), 0.88)
+        
         ZStack {
           Color.appBackground.ignoresSafeArea()
           
@@ -215,7 +217,9 @@ struct MainMenuView : View
     .shadow(color: Color.appCyan.opacity(0.2), radius: 18)
   }
   
-  private func mainButtons(scale: CGFloat) -> some View {
+  private
+  func mainButtons(scale: CGFloat) -> some View
+  {
     VStack(spacing: 12 * scale) {
       
       //- dsd: Campaign mode button
@@ -301,13 +305,13 @@ struct MainMenuView : View
           )
           
           Text("LEVEL SELECT")
-            .font(.system(size: 20 * scale, weight: .bold))
+            .font(Fonts.jbBold(20 * scale))
             .foregroundStyle(.white.opacity(0.95))
           
           Spacer(minLength: 0)
           
           Image(systemName: "chevron.right")
-            .font(.system(size: 18 * scale, weight: .bold))
+            .font(Fonts.jbBold(18 * scale))
             .foregroundStyle(.white.opacity(0.4))
         }
         .padding(16 * scale)
@@ -334,7 +338,7 @@ struct MainMenuView : View
           )
           
           Text("SURVIVAL MODE")
-            .font(.system(size: 20 * scale, weight: .bold))
+            .font(Fonts.jbBold(20 * scale))
             .foregroundStyle(.white)
             .lineLimit(1)
             .minimumScaleFactor(0.7)

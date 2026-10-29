@@ -7,18 +7,13 @@
 
 import Combine
 import Foundation
+import SwiftData
 
+@MainActor  // TODO(dsd): why main actor here
 final
 class GameViewModel : ObservableObject
 {
-  @Published var currentlevel: Level = Level(
-    name: "",
-    noOfCPUCores: 0,
-    availableMemory: 0,
-    tasks: Array(),
-    difficulty: .Easy,
-    timeLimit: TimeInterval(),
-  )
+  @Published var currentLevel: Level?
   @Published var gameStatus: GameStatus = .Ready
   @Published var score: Int32 = 0
   @Published var elapsedTime: Float32 = 0
@@ -30,13 +25,26 @@ class GameViewModel : ObservableObject
 
   init()
   {
-    timerSubscription = timer
-      .sink { [weak self] _ in self?.updateTimer() }
+    timerSubscription = timer.sink { [weak self] _ in
+      self?.updateTimer()
+    }
   }
   
-  func setupGame(level: Level)
+  //- dsd: get number of cores, available memory and tasks list
+  // of the current level
+  func getLevelData() -> (Int32, Int32, Array<WorkloadTask>?)
   {
-    self.currentlevel = level
+    guard let currentLevel else
+    {
+      return (0, 0, nil)
+    }
+    
+    return (currentLevel.noOfCPUCores, currentLevel.availableMemory, currentLevel.tasks)
+  }
+  
+  func setupGame(with level: Level)
+  {
+    self.currentLevel = level
     self.gameStatus = .Ready
     self.score = 0
     self.elapsedTime = 0
@@ -57,6 +65,46 @@ class GameViewModel : ObservableObject
     }
   }
   
+  func getReadyTasks() -> Array<WorkloadTask>
+  {
+    guard let currentLevel else { return Array() }
+
+    return currentLevel.tasks.filter { task in
+      task.state == .Ready
+    }
+  }
+  
+  //- dsd: complete a level (need to trigger the win condition)
+  func completeLevel(level: Level, player: PlayerProfile, modelContext: ModelContext) throws
+  {
+    let playerID = player.gamePlayerID
+    let levelID = level.id
+    
+    let predicate = #Predicate<LevelProgress> { progress in
+      progress.levelID == levelID && progress.player?.gamePlayerID == playerID
+    }
+    let descriptor = FetchDescriptor<LevelProgress>(predicate: predicate)
+    
+    let progress: LevelProgress
+    
+    //- dsd: look if the player is already completed the level
+    if let existingProgress = try modelContext.fetch(descriptor).first
+    {
+      progress = existingProgress
+    }
+    else
+    {
+      progress = LevelProgress(levelID: levelID)
+      progress.player = player
+      modelContext.insert(progress)
+    }
+    
+    progress.isCompleted = true
+    progress.completedAt = .now
+    
+    try modelContext.save()
+  }
+  
   // TODO(dsd): @feature Create task queue
   // Task must come in random intervals and random amount of tasks
   // around 2-5 tasks should come at a time. We have the task list
@@ -66,10 +114,12 @@ class GameViewModel : ObservableObject
   private 
   func updateTimer()
   {
-    guard gameStatus == .Ready, currentlevel.timeLimit > 0 else { return }
+    guard let currentLevel else { return }
+    
+    guard gameStatus == .Ready, currentLevel.timeLimit > 0 else { return }
 
     elapsedTime += 1
-    remainingTime = max(0, currentlevel.timeLimit - TimeInterval(elapsedTime))
+    remainingTime = max(0, currentLevel.timeLimit - TimeInterval(elapsedTime))
 
     if remainingTime == 0
     {
@@ -78,9 +128,10 @@ class GameViewModel : ObservableObject
   }
 }
 
-extension GameStatus: Equatable {}
-
-enum GameStatus
+enum GameStatus : Equatable
 {
-  case Ready, Won, GameOver, Paused
+  case Ready
+  case Won
+  case GameOver
+  case Paused
 }

@@ -6,69 +6,92 @@
 //
 
 import SwiftUI
+import SwiftData
 
+// TODO(dsd): create levels.json
 struct LevelSelectView : View
 {
-  @Environment(\.dismiss) private var dismiss
-
-  @State private var selectedSector = 0
+  @Environment(\.dismiss)
+  private var dismiss
+  
+  @Environment(\.modelContext)
+  private var modelContext
+  
+  @State
+  private var selectedSector = 0
+  
+  @StateObject
+  private var levelSelectViewModel = LevelSelectViewModel()
 
   private let sectors = [
     ("SECTOR 1", "BASICS"),
     ("SECTOR 2", "SERVERS"),
     ("SECTOR 3", "OVERCLOCK")
   ]
-
-  var body: some View {
-    ZStack {
-      Color.appBackground.ignoresSafeArea()
-
-      ScrollView(showsIndicators: false) {
-        VStack(alignment: .leading, spacing: 0) {
-          header
-            .padding(.top, 24)
-
-          sectorSelector
-            .padding(.top, 32)
-
-          sectionHeading
-            .padding(.top, 26)
-            .padding(.bottom, 24)
-
-          levelList
-
-          Spacer(minLength: 40)
-        }
-        .padding(.horizontal, 20)
-        .padding(.bottom, 32)
-      }
-    }
-    .toolbar(.hidden, for: .navigationBar)
-    .preferredColorScheme(.dark)
+  
+  init()
+  {
+    levelSelectViewModel.configure(modelContext)
   }
 
-  private var header: some View {
-    HStack(spacing: 28) {
+  var body: some View {
+    GeometryReader { geometry in
+      let componentScale = min(max(geometry.size.width / 430, 0.68), 0.8)
+      
+      ZStack {
+        Color.appBackground.ignoresSafeArea()
+        
+        ScrollView(showsIndicators: false) {
+          VStack(alignment: .leading, spacing: 0) {
+            header(componentScale)
+              .padding(.top, 18)
+            
+            sectorSelector(componentScale)
+              .padding(.top, 22)
+            
+            sectionHeading(componentScale)
+              .padding(.top, 20)
+              .padding(.bottom, 18)
+            
+            levelList
+            
+            Spacer(minLength: 40)
+          }
+          .padding(.horizontal, 16)
+          .padding(.bottom, 24)
+        }
+      }
+      .toolbar(.hidden, for: .navigationBar)
+      .preferredColorScheme(.dark)
+    }
+  }
+
+  private
+  func header(_ scale: Float64) -> some View
+  {
+    return HStack(spacing: 28) {
       Button {
         dismiss()
       } label: {
         Image(systemName: "arrow.left")
-          .font(Fonts.jbRegular(28))
+          .font(Fonts.jbRegular(22))
           .foregroundStyle(Color.white.opacity(0.8))
-          .frame(width: 36, height: 48)
+          .frame(width: 36 * scale, height: 48 * scale)
       }
       .buttonStyle(.plain)
 
       Text("LEVEL SELECT")
-        .font(Fonts.jbBold(24))
+        .font(Fonts.jbBold(20))
         .foregroundStyle(Color.white.opacity(0.9))
 
       Spacer()
     }
   }
 
-  private var sectorSelector: some View {
-    HStack(spacing: 0) {
+  private
+  func sectorSelector(_ scale: Float64) -> some View
+  {
+    return HStack(spacing: 0) {
       ForEach(sectors.indices, id: \.self) { index in
         let isSelected = selectedSector == index
 
@@ -77,24 +100,24 @@ struct LevelSelectView : View
             selectedSector = index
           }
         } label: {
-          VStack(spacing: 10) {
+          VStack(spacing: 7) {
             Text(sectors[index].0)
-              .font(Fonts.jbBold(17))
+              .font(Fonts.jbBold(14))
               .lineLimit(1)
-              .minimumScaleFactor(0.7)
+              .minimumScaleFactor(scale)
 
             Text(sectors[index].1)
-              .font(Fonts.jbBold(13))
+              .font(Fonts.jbBold(11))
               .tracking(0.5)
               .lineLimit(1)
-              .minimumScaleFactor(0.7)
+              .minimumScaleFactor(scale)
           }
           .foregroundStyle(
             isSelected
             ? Color.appCyan
             : Color.white.opacity(0.38)
           )
-          .frame(maxWidth: .infinity, minHeight: 100)
+          .frame(maxWidth: .infinity, minHeight: 76)
           .background(
             isSelected
             ? Color.appCyan.opacity(0.14)
@@ -114,7 +137,7 @@ struct LevelSelectView : View
         .buttonStyle(.plain)
       }
     }
-    .padding(8)
+    .padding(6)
     .background(Color.appPanel)
     .overlay {
       Rectangle()
@@ -125,24 +148,31 @@ struct LevelSelectView : View
     }
   }
 
-  private var sectionHeading: some View {
-    VStack(alignment: .leading, spacing: 12) {
+  private
+  func sectionHeading(_ scale: Float64) -> some View
+  {
+    return VStack(alignment: .leading, spacing: 12) {
       Text(String(format: "SECTOR %02d", selectedSector + 1))
-        .font(Fonts.jbBold(17))
+      .font(Fonts.jbBold(14))
         .tracking(4)
         .foregroundStyle(Color.appCyan)
 
-      #warning("Placeholder")
       Text(
+        //- dsd: create a temp array with the names of the sectors
+        // and subscript it right here using selectedSector as the
+        // index.
+        
+        // TODO(dsd): this is harder to read but looks really cool.
+        // need to decide whether to keep it or just make it readable.
         [
-          "Silicon Core",
-          "Server Infrastructure",
-          "Overclock Protocol",
+          sectors[0].1,
+          sectors[1].1,
+          sectors[2].1,
         ][selectedSector]
       )
-      .font(Fonts.jbBold(32))
+      .font(Fonts.jbBold(26))
       .foregroundStyle(.white)
-      .minimumScaleFactor(0.7)
+      .minimumScaleFactor(scale)
       .lineLimit(1)
     }
   }
@@ -150,9 +180,13 @@ struct LevelSelectView : View
   // TODO(dsd): this should load according to the level list
   @ViewBuilder
   private var levelList: some View {
-    switch selectedSector {
+    let levels = levelSelectViewModel.levels
+    // TODO(dsd): use these levels to populate this.
+    
+    switch selectedSector
+    {
     case 0:
-      VStack(spacing: 16) {
+      VStack(spacing: 12) {
         ClearedLevelCard(
           number: "01",
           title: "Boot Sequence",
@@ -189,7 +223,7 @@ struct LevelSelectView : View
       }
 
     case 1:
-      VStack(spacing: 16) {
+      VStack(spacing: 12) {
         LockedLevelCard(
           number: "01",
           title: "Request Queue"
@@ -207,7 +241,7 @@ struct LevelSelectView : View
       }
 
     default:
-      VStack(spacing: 16) {
+      VStack(spacing: 12) {
         LockedLevelCard(
           number: "01",
           title: "Thermal Limits"
@@ -235,11 +269,11 @@ struct ClearedLevelCard : View
   let onReplay: () -> Void
 
   var body: some View {
-    HStack(spacing: 20) {
+    HStack(spacing: 14) {
       Image(systemName: "checkmark")
-        .font(Fonts.jbBold(25))
+        .font(Fonts.jbBold(20))
         .foregroundStyle(Color.appGreen)
-        .frame(width: 64, height: 80)
+        .frame(width: 52, height: 64)
         .background(Color.appGreen.opacity(0.13))
         .overlay {
           Rectangle()
@@ -249,21 +283,21 @@ struct ClearedLevelCard : View
             )
         }
 
-      VStack(alignment: .leading, spacing: 12) {
-        HStack(spacing: 12) {
+      VStack(alignment: .leading, spacing: 8) {
+        HStack(spacing: 8) {
           Text(number)
-            .font(Fonts.jbBold(18))
+            .font(Fonts.jbBold(15))
             .foregroundStyle(.white.opacity(0.4))
 
           Text(title)
-            .font(Fonts.jbBold(20))
+            .font(Fonts.jbBold(16))
             .foregroundStyle(.white)
             .lineLimit(1)
             .minimumScaleFactor(0.7)
         }
 
         Text("CLEARED")
-          .font(Fonts.jbBold(15))
+          .font(Fonts.jbBold(12))
           .tracking(1)
           .foregroundStyle(Color.appGreen)
       }
@@ -272,10 +306,10 @@ struct ClearedLevelCard : View
 
       Button(action: onReplay) {
         Text("REPLAY")
-          .font(Fonts.jbBold(14))
+          .font(Fonts.jbBold(11))
           .foregroundStyle(.white.opacity(0.7))
-          .padding(.horizontal, 16)
-          .frame(height: 50)
+          .padding(.horizontal, 12)
+          .frame(height: 40)
           .background(Color.white.opacity(0.04))
           .overlay {
             Rectangle()
@@ -287,8 +321,8 @@ struct ClearedLevelCard : View
       }
       .buttonStyle(.plain)
     }
-    .padding(20)
-    .frame(maxWidth: .infinity, minHeight: 142)
+    .padding(14)
+    .frame(maxWidth: .infinity, minHeight: 108)
     .background(Color(red: 0.055, green: 0.075, blue: 0.105))
     .overlay {
       Rectangle()
@@ -308,12 +342,12 @@ struct CurrentLevelCard : View {
   let onPlay: () -> Void
 
   var body: some View {
-    VStack(spacing: 24) {
-      HStack(alignment: .center, spacing: 16) {
+    VStack(spacing: 16) {
+      HStack(alignment: .center, spacing: 12) {
         Text(number)
-          .font(Fonts.jbBold(25))
+          .font(Fonts.jbBold(20))
           .foregroundStyle(Color.black)
-          .frame(width: 80, height: 80)
+          .frame(width: 64, height: 64)
           .background(
             LinearGradient(
               colors: [
@@ -326,35 +360,20 @@ struct CurrentLevelCard : View {
           )
           .shadow(color: Color.appCyan.opacity(0.3), radius: 10, y: 4)
 
-        VStack(alignment: .leading, spacing: 10) {
-          HStack(spacing: 10) {
+        VStack(alignment: .leading, spacing: 7) {
+          HStack(spacing: 7) {
             Text(title)
-              .font(Fonts.jbBold(22))
+              .font(Fonts.jbBold(17))
               .foregroundStyle(.white)
               .fixedSize(horizontal: false, vertical: true)
-
-            Text("CURRENT")
-              .font(Fonts.jbBold(12))
-              .tracking(1)  // TODO(dsd): find what this does
-              .foregroundStyle(Color.appCyan)
-              .padding(.horizontal, 10)
-              .padding(.vertical, 8)
-              .background(Color.appCyan.opacity(0.15))
-              .overlay {
-                Rectangle()
-                  .strokeBorder(
-                    Color.appCyan.opacity(0.4),
-                    lineWidth: 1
-                  )
-              }
           }
 
-          HStack(spacing: 10) {
+          HStack(spacing: 7) {
             Image(systemName: "stopwatch")
               .foregroundStyle(Color.appCyan)
 
             Text("Objective: \(objective)")
-              .font(Fonts.jbBold(16))
+              .font(Fonts.jbBold(13))
               .foregroundStyle(
                 Color(red: 0.62, green: 0.77, blue: 0.86)
               )
@@ -371,14 +390,14 @@ struct CurrentLevelCard : View {
       Button(action: onPlay) {
         HStack(spacing: 12) {
           Image(systemName: "play")
-            .font(Fonts.jbBold(20))
+          .font(Fonts.jbBold(16))
 
           Text("PLAY")
-            .font(Fonts.jbBold(23))
+            .font(Fonts.jbBold(18))
             .tracking(1)
         }
         .foregroundStyle(Color.black)
-        .frame(maxWidth: .infinity, minHeight: 82)
+        .frame(maxWidth: .infinity, minHeight: 64)
         .background(
           LinearGradient(
             colors: [
@@ -392,7 +411,7 @@ struct CurrentLevelCard : View {
       }
       .buttonStyle(.plain)
     }
-    .padding(24)
+    .padding(18)
     .background(
       LinearGradient(
         colors: [
@@ -405,7 +424,7 @@ struct CurrentLevelCard : View {
     )
     .overlay {
       Rectangle()
-        .strokeBorder(Color.appCyan, lineWidth: 3)
+        .strokeBorder(Color.appCyan, lineWidth: 2)
     }
     .shadow(color: Color.appCyan.opacity(0.13), radius: 18)
   }
@@ -418,11 +437,11 @@ struct LockedLevelCard : View
   let title: String
 
   var body: some View {
-    HStack(spacing: 28) {
+    HStack(spacing: 18) {
       Image(systemName: "lock")
-        .font(Fonts.jbBold(25))
+        .font(Fonts.jbBold(20))
         .foregroundStyle(Color.appMuted.opacity(0.8))
-        .frame(width: 64, height: 80)
+        .frame(width: 52, height: 64)
         .background(Color.white.opacity(0.025))
         .overlay {
           Rectangle()
@@ -432,30 +451,30 @@ struct LockedLevelCard : View
             )
         }
 
-      VStack(alignment: .leading, spacing: 10) {
-        HStack(spacing: 12) {
+      VStack(alignment: .leading, spacing: 7) {
+        HStack(spacing: 8) {
           Text(number)
-            .font(Fonts.jbBold(18))
+            .font(Fonts.jbBold(15))
 
           Text(title)
-            .font(Fonts.jbBold(20))
+            .font(Fonts.jbBold(16))
             .lineLimit(1)
             .minimumScaleFactor(0.7)
         }
 
         Text("Locked")
-          .font(Fonts.jbBold(15))
+          .font(Fonts.jbBold(12))
       }
       .foregroundStyle(Color.appMuted.opacity(0.75))
 
       Spacer(minLength: 0)
 
       Image(systemName: "lock.fill")
-        .font(Fonts.jbRegular(23))
+        .font(Fonts.jbRegular(18))
         .foregroundStyle(Color.appMuted.opacity(0.7))
     }
-    .padding(20)
-    .frame(maxWidth: .infinity, minHeight: 142)
+    .padding(14)
+    .frame(maxWidth: .infinity, minHeight: 108)
     .background(Color.white.opacity(0.012))
     .overlay {
       Rectangle()

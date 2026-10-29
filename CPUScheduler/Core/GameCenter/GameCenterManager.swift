@@ -7,6 +7,7 @@
 
 import Combine
 import GameKit
+import SwiftData
 
 final
 class GameCenterManager
@@ -18,6 +19,41 @@ class GameCenterManager
 
   var localPlayer: GKLocalPlayer {
     GKLocalPlayer.local
+  }
+  
+  // TODO(dsd): need to create a guest profile and save it as the
+  // local profile until player signs in with game center
+  
+  //- dsd: creating a local profile for offline play
+  func loadOrCreateProfile(modelContext: ModelContext) throws -> PlayerProfile
+  {
+    guard isAuthenticated else
+    {
+      throw GameCenterError.NotAuthenticated
+    }
+    
+    let gamePlayerID = localPlayer.gamePlayerID
+    
+    // TODO(dsd): look into predicate, descriptor
+    let predicate = #Predicate<PlayerProfile> { profile in
+      profile.gamePlayerID == gamePlayerID
+    }
+    let descriptor = FetchDescriptor<PlayerProfile>(predicate: predicate)
+    
+    //- dsd: check for existing local profile and update it
+    if let existingProfile = try modelContext.fetch(descriptor).first
+    {
+      existingProfile.lastPlayedAt = .now
+      try modelContext.save()
+      return existingProfile
+    }
+    
+    //- dsd: create a local profile for the player
+    let profile = PlayerProfile(gamePlayerID: gamePlayerID)
+    modelContext.insert(profile)
+    try modelContext.save()
+    
+    return profile
   }
 
   func authenticate()
